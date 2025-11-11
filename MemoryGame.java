@@ -1,23 +1,3 @@
-/* MemoryGame.java
- *
- * DWCC Memory Game - Theme B1 (Full Branding, welcome screen white)
- * - Lives per level: 5,10,15,20,25
- * - Time per level:  0,0,60,90,120  (0 = unlimited)
- * - Automatic level progression
- * - Custom welcome panel with name input (blank on every show)
- * - Personalized end messages (win/lose) with Play Again (asks name again) or Exit
- * - Theme B1: window white, top/bottom dark green, board soft green
- * - CARD BACK: default Swing buttons (KEEP)
- *
- * ✅ Updated features:
- * - NEW: Timer pauses when a correct match popup appears and resumes on OK
- * - Uses fixed level-based card sets (no random pool)
- *
- * Compile & Run:
- * javac MemoryGame.java
- * java MemoryGame
- */
-
  import javax.swing.*;
  import javax.swing.border.EmptyBorder;
  import javax.swing.border.LineBorder;
@@ -589,4 +569,5 @@
          SwingUtilities.invokeLater(() -> new MemoryGame());
      }
  }
+
  
