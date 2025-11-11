@@ -9,29 +9,28 @@
  
  public class MemoryGame extends JFrame {
  
-     // ✅ FIXED CARD LISTS PER LEVEL (REPLACES RANDOM POOL)
      private static final String[][] LEVEL_CONTENT = {
-             // LEVEL 1 (4 pairs)
+             
              {"SIT", "JPCS", "SOE", "SOA"},
-             // LEVEL 2 (6 pairs)
+            
              {"TDG", "TAJ", "GTS", "Halcons", "SBHTM", "SAFA"},
-             // LEVEL 3 (8 pairs)
+             
              {"SE", "SAS", "SCJ", "SC", "SEB", "OBRA", "DDC", "Musika Divinista"},
-             // LEVEL 4 (10 pairs)
+             
              {"Miss DWCC Organization", "SAO", "SAYM", "Phoenix Debate Council", "DivinisTanghalan",
                      "DWCC Saver-G", "Peer Facilitators' Club", "Mangyan Student Organization",
                      "DWCC Rotaract Club of Calapan", "Missionary Families of Christ"},
-             // LEVEL 5 (12 pairs)
+            
              {"DWCC Brass Band", "Association of Student Grantees", "ATEMS", "AJE", "AMMS", "CELT",
                      "PE Mentors", "AHRMS", "LIA", "SYFINEX", "JPIA", "SVD Co-Missionary"}
      };
  
-     // Level configuration
+    
      private static final int[] PAIRS_BY_LEVEL = {4, 6, 8, 10, 12};
      private static final int[] LIVES_BY_LEVEL =  {5, 10, 15, 20, 25};
      private static final int[] TIME_LIMIT_BY_LEVEL_SECONDS = {0, 0, 60, 90, 120};
  
-     // Theme colors (B1)
+    
      private static final Color WINDOW_BG = Color.WHITE;
      private static final Color HEADER_FOOTER = new Color(0x1F5C34);
      private static final Color BOARD_BG = new Color(0xE8F3EC);
@@ -39,7 +38,7 @@
      private static final Color HEADER_TEXT = Color.WHITE;
      private static final Color PRIMARY_TEXT = Color.BLACK;
  
-     // Player & Game state
+    
      private String playerName = null;
      private int level = 1;
      private int pairs;
@@ -50,7 +49,7 @@
      private int consecutiveMatches = 0;
      private int attempts = 0;
  
-     // UI components
+     
      private JPanel boardPanel;
      private JLabel infoLabel;
      private JLabel livesLabel;
@@ -61,12 +60,12 @@
      private javax.swing.Timer countdownTimer;
      private int timeRemaining;
  
-     // Cards
+     
      private List<CardButton> cards = new ArrayList<>();
      private CardButton firstSelected = null;
      private CardButton secondSelected = null;
  
-     // ✅ Updated descriptions map (brochure style)
+     
      private final Map<String, String> descriptions = new HashMap<>();
  
      public MemoryGame() {
@@ -92,7 +91,7 @@
          setVisible(true);
      }
  
-     // ✅ Descriptions stored here...
+     
      private void createDescriptions() {
          descriptions.put("SIT", "School of Information Technology — The academic unit that trains future IT professionals.");
          descriptions.put("JPCS", "Junior Philippine Computer Society — An organization for IT student leadership and skills.");
@@ -140,7 +139,7 @@
          descriptions.put("SVD Co-Missionary", "SVD Co-Missionary — Religious volunteer and mission assistance group.");
      }
  
-     /* -------------- UI CREATION CODE (unchanged) -------------- */
+     
  
      private boolean showWelcomeScreenAndGetName() {
          while (true) {
@@ -251,7 +250,7 @@
          add(boardPanel, BorderLayout.CENTER);
      }
  
-     /* ---------------- GAME START & UI UPDATES ---------------- */
+     
  
      private void startLevel() {
          pairs = PAIRS_BY_LEVEL[level - 1];
@@ -276,7 +275,7 @@
                  "  Matches: " + matchesFound);
      }
  
-     /* ------------------ UPDATED CARD GRID ------------------ */
+     
  
      private void setupCardsGrid(int pairs) {
          cards.clear();
@@ -313,7 +312,7 @@
          revalidate();
      }
  
-     /* --------------------- GAME LOGIC ---------------------- */
+    
  
      private void onCardClicked(CardButton b) {
          if (flipBackTimer != null && flipBackTimer.isRunning()) return;
@@ -332,7 +331,7 @@
              infoLabel.setText("Player: " + (playerName == null ? "?" : playerName) +
                      "  |  Level " + level + " — Attempts: " + attempts);
  
-             // ✅ ------------------ CORRECT MATCH DETECTED ------------------
+             
              if (firstSelected.getContent().equals(secondSelected.getContent())) {
                  firstSelected.setMatched(true);
                  secondSelected.setMatched(true);
@@ -345,7 +344,7 @@
                  score += basePoints + timeBonus + streakBonus;
                  Toolkit.getDefaultToolkit().beep();
  
-                 // ✅ NEW: PAUSE TIMER BEFORE SHOWING POPUP
+                 
                  boolean timerWasRunning = false;
                  if (countdownTimer != null && countdownTimer.isRunning()) {
                      countdownTimer.stop();
@@ -358,7 +357,7 @@
                          "<html><b>" + key + "</b><br/><i>" + desc + "</i></html>",
                          "Match found!", JOptionPane.INFORMATION_MESSAGE);
  
-                 // ✅ RESUME TIMER AFTER POPUP CLOSES
+                 
                  if (timerWasRunning && timeRemaining > 0) {
                      countdownTimer.start();
                  }
@@ -372,7 +371,7 @@
                  }
  
              } else { 
-                 // ❌ INCORRECT MATCH (no timer pause here)
+                 
                  consecutiveMatches = 0;
                  lives--;
                  Toolkit.getDefaultToolkit().beep();
@@ -397,7 +396,7 @@
          }
      }
  
-     /* ---------------- LEVEL + GAME END LOGIC ---------------- */
+    
  
      private void onLevelComplete() {
          if (countdownTimer != null) countdownTimer.stop();
@@ -491,8 +490,7 @@
          startLevel();
      }
  
-     /* ---------------- TIMER HANDLING ---------------- */
- 
+     
      private void startCountdownIfNeeded() {
          if (countdownTimer != null) countdownTimer.stop();
          if (timeLimitSeconds > 0) {
@@ -520,7 +518,7 @@
          return String.format("%02d:%02d", mm, ss);
      }
  
-     /* ---------------- CARD BUTTON CLASS ---------------- */
+     
  
      private class CardButton extends JButton {
          private String content;
@@ -571,3 +569,4 @@
  }
 
  
+
