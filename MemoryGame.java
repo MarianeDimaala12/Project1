@@ -46,6 +46,10 @@ public class MemoryGame extends JFrame {
     private int attempts = 0;
 
     private JPanel boardPanel;
+    // MAIN & PAUSE MENU PANELS
+    private JPanel mainMenuPanel;
+    private JPanel pauseMenuPanel;
+
     private JLabel infoLabel;
     private JLabel livesLabel;
     private JLabel scoreLabel;
@@ -72,6 +76,11 @@ public class MemoryGame extends JFrame {
         createDescriptions();
         createTopPanel();
         createBoardPanel();
+        createMainMenuPanel();
+        createPauseMenuPanel();
+
+        
+        
 
         // show new fade-in welcome screen (Option B: replaces previous popup)
         SwingUtilities.invokeLater(() -> {
@@ -84,6 +93,69 @@ public class MemoryGame extends JFrame {
 
         setVisible(true);
     }
+    private void createMainMenuPanel() {
+        mainMenuPanel = new JPanel();
+        mainMenuPanel.setLayout(new GridLayout(5, 1, 10, 10));
+        mainMenuPanel.setBorder(new EmptyBorder(40, 40, 40, 40));
+        mainMenuPanel.setBackground(Color.WHITE);
+        
+        JButton resumeBtn = new JButton("Resume Game");
+        JButton newGameBtn = new JButton("Start New Game");
+        JButton leaderboardBtn = new JButton("Leaderboard");
+        JButton settingsBtn = new JButton("Settings");
+        JButton exitBtn = new JButton("Exit Game");
+        
+        styleControlButton(resumeBtn);
+        styleControlButton(newGameBtn);
+        styleControlButton(leaderboardBtn);
+        styleControlButton(settingsBtn);
+        styleControlButton(exitBtn);
+        
+        resumeBtn.addActionListener(e -> returnToGameScreen());
+        newGameBtn.addActionListener(e -> restartLevel());
+        leaderboardBtn.addActionListener(e -> showLeaderboard());
+        settingsBtn.addActionListener(e -> showSettingsMenu());
+        exitBtn.addActionListener(e -> System.exit(0));
+        
+        mainMenuPanel.add(resumeBtn);
+        mainMenuPanel.add(newGameBtn);
+        mainMenuPanel.add(leaderboardBtn);
+        mainMenuPanel.add(settingsBtn);
+        mainMenuPanel.add(exitBtn);
+    }
+    
+    private void createPauseMenuPanel() {
+        pauseMenuPanel = new JPanel();
+        pauseMenuPanel.setLayout(new GridLayout(5, 1, 10, 10));
+        pauseMenuPanel.setBorder(new EmptyBorder(40, 40, 40, 40));
+        pauseMenuPanel.setBackground(Color.WHITE);
+        
+        JButton resumeBtn = new JButton("Resume Game");
+        JButton newGameBtn = new JButton("Start New Game");
+        JButton leaderboardBtn = new JButton("Leaderboard");
+        JButton settingsBtn = new JButton("Settings");
+        JButton exitBtn = new JButton("Exit Game");
+        
+        styleControlButton(resumeBtn);
+        styleControlButton(newGameBtn);
+        styleControlButton(leaderboardBtn);
+        styleControlButton(settingsBtn);
+        styleControlButton(exitBtn);
+        
+        resumeBtn.addActionListener(e -> returnToGameScreen());
+        newGameBtn.addActionListener(e -> restartLevel());
+        leaderboardBtn.addActionListener(e -> showLeaderboard());
+        settingsBtn.addActionListener(e -> showSettingsMenu());
+        exitBtn.addActionListener(e -> System.exit(0));
+        
+        pauseMenuPanel.add(resumeBtn);
+        pauseMenuPanel.add(newGameBtn);
+        pauseMenuPanel.add(leaderboardBtn);
+        pauseMenuPanel.add(settingsBtn);
+        pauseMenuPanel.add(exitBtn);
+    }
+
+
 
     private void createDescriptions() {
         descriptions.put("SIT", "School of Information Technology — The academic unit that trains future IT professionals.");
@@ -189,7 +261,7 @@ public class MemoryGame extends JFrame {
 
         JPanel inputRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 6));
         inputRow.setBackground(WINDOW_BG);
-        JLabel nameLbl = new JLabel("U:");
+        JLabel nameLbl = new JLabel("Please enter your username:");
         JTextField nameField = new JTextField(20);
         inputRow.add(nameLbl);
         inputRow.add(nameField);
@@ -350,7 +422,47 @@ public class MemoryGame extends JFrame {
         bottom.add(restartButton);
 
         add(bottom, BorderLayout.SOUTH);
+        
+        JButton menuButton = new JButton("Main Menu");
+        styleControlButton(menuButton);
+        menuButton.addActionListener(e -> showMainMenu());
+        
+        JButton pauseButton = new JButton("Pause");
+        styleControlButton(pauseButton);
+        pauseButton.addActionListener(e -> showPauseMenu());
+        
+        bottom.add(menuButton);
+        bottom.add(pauseButton);
+
     }
+    
+    private void showMainMenu() {
+        setContentPane(mainMenuPanel);
+        revalidate();
+        repaint();
+    }
+    
+    private void showPauseMenu() {
+        if (countdownTimer != null && countdownTimer.isRunning()) {
+            countdownTimer.stop();
+        }
+        setContentPane(pauseMenuPanel);
+        revalidate();
+        repaint();
+    }
+    
+    private void returnToGameScreen() {
+        if (countdownTimer != null && timeLimitSeconds > 0) {
+            countdownTimer.start();
+        }
+        setContentPane(getContentPane()); // return to game panel
+        setContentPane(getRootPane().getContentPane());
+        setContentPane(boardPanel.getParent());
+        
+        revalidate();
+        repaint();
+    }
+
 
     private void styleControlButton(JButton btn) {
         btn.setBackground(Color.WHITE);
@@ -683,5 +795,13 @@ public class MemoryGame extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new MemoryGame());
+    }
+    
+    private void showLeaderboard() {
+        JOptionPane.showMessageDialog(this, "Leaderboard coming soon...");
+    }
+    
+    private void showSettingsMenu() {
+        JOptionPane.showMessageDialog(this, "Settings coming soon...");
     }
 }
