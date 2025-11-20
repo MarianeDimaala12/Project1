@@ -64,6 +64,10 @@ public class MemoryGame extends JFrame {
     private CardButton secondSelected = null;
 
     private final Map<String, String> descriptions = new HashMap<>();
+    
+    // Leaderboard storage
+private static final String LEADERBOARD_FILE = "leaderboard.txt";
+    
 
     public MemoryGame() {
         super("DWCC Memory Game");
@@ -114,7 +118,7 @@ public class MemoryGame extends JFrame {
         resumeBtn.addActionListener(e -> returnToGameScreen());
         newGameBtn.addActionListener(e -> restartLevel());
         leaderboardBtn.addActionListener(e -> showLeaderboard());
-        settingsBtn.addActionListener(e -> showSettingsMenu());
+        //settingsBtn.addActionListener(e -> showSettingsMenu());
         exitBtn.addActionListener(e -> System.exit(0));
         
         mainMenuPanel.add(resumeBtn);
@@ -145,7 +149,7 @@ public class MemoryGame extends JFrame {
         resumeBtn.addActionListener(e -> returnToGameScreen());
         newGameBtn.addActionListener(e -> restartLevel());
         leaderboardBtn.addActionListener(e -> showLeaderboard());
-        settingsBtn.addActionListener(e -> showSettingsMenu());
+        //settingsBtn.addActionListener(e -> showSettingsMenu());
         exitBtn.addActionListener(e -> System.exit(0));
         
         pauseMenuPanel.add(resumeBtn);
@@ -644,6 +648,8 @@ public class MemoryGame extends JFrame {
 
         String player = (playerName == null || playerName.trim().isEmpty()) ? "Player" : playerName;
         String msg = String.format("%s, you LOST at Level %d!\nFinal Score: %d", player, level, score);
+        saveScoreToLeaderboard();
+
 
         Object[] options = {"Play Again (Level 1)", "Exit"};
         int choice = JOptionPane.showOptionDialog(this, msg, "Game Over",
@@ -669,6 +675,8 @@ public class MemoryGame extends JFrame {
 
         String player = (playerName == null || playerName.trim().isEmpty()) ? "Player" : playerName;
         String msg = String.format("%s, you WIN! You finished Level %d!\nFinal Score: %d", player, level, score);
+        
+        saveScoreToLeaderboard();
 
         Object[] options = {"Play Again (Level 1)", "Exit"};
         int choice = JOptionPane.showOptionDialog(this, msg, "You Win!",
@@ -793,15 +801,69 @@ public class MemoryGame extends JFrame {
 }
 
 
+    private void saveScoreToLeaderboard() {
+    try {
+        java.nio.file.Files.write(
+                java.nio.file.Paths.get(LEADERBOARD_FILE),
+                (playerName + " - " + score + System.lineSeparator()).getBytes(),
+                java.nio.file.StandardOpenOption.CREATE,
+                java.nio.file.StandardOpenOption.APPEND
+        );
+    } catch (IOException ex) {
+        System.out.println("Error saving leaderboard: " + ex.getMessage());
+    }
+}
+    
+    private List<String> loadLeaderboard() {
+    try {
+        return java.nio.file.Files.readAllLines(java.nio.file.Paths.get(LEADERBOARD_FILE));
+    } catch (IOException ex) {
+        return new ArrayList<>();
+    }
+}
+
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new MemoryGame());
     }
     
     private void showLeaderboard() {
-        JOptionPane.showMessageDialog(this, "Leaderboard coming soon...");
+    List<String> scores = loadLeaderboard();
+
+    if (scores.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "No leaderboard data yet.");
+        return;
+    }
+
+    // Sort scores (highest first)
+    scores.sort((a, b) -> {
+        int scoreA = Integer.parseInt(a.substring(a.lastIndexOf("-") + 1).trim());
+        int scoreB = Integer.parseInt(b.substring(b.lastIndexOf("-") + 1).trim());
+        return Integer.compare(scoreB, scoreA);
+    });
+
+    StringBuilder sb = new StringBuilder();
+    sb.append("🏆 TOP PLAYERS 🏆\n\n");
+    int rank = 1;
+    for (String entry : scores) {
+        sb.append(rank++).append(". ").append(entry).append("\n");
+        if (rank > 20) break; // show top 20 only
+    }
+
+    JTextArea area = new JTextArea(sb.toString());
+    area.setEditable(false);
+    area.setFont(new Font("Monospaced", Font.PLAIN, 14));
+    area.setMargin(new Insets(10,10,10,10));
+
+    JScrollPane scroll = new JScrollPane(area);
+    scroll.setPreferredSize(new Dimension(350, 300));
+
+    JOptionPane.showMessageDialog(this, scroll, "Leaderboard", JOptionPane.INFORMATION_MESSAGE);
+}
+
     }
     
-    private void showSettingsMenu() {
-        JOptionPane.showMessageDialog(this, "Settings coming soon...");
-    }
-}
+   // private void showSettingsMenu() {
+      //  JOptionPane.showMessageDialog(this, "Settings coming soon...");
+   // }
+//}
