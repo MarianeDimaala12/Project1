@@ -1,6 +1,8 @@
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -14,7 +16,11 @@ import java.io.FileWriter;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.File;
-
+import java.nio.file.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.stream.Collectors;
+import java.util.Properties;
 
 public class MemoryGame extends JFrame {
 
@@ -69,10 +75,12 @@ public class MemoryGame extends JFrame {
     private CardButton secondSelected = null;
 
     private final Map<String, String> descriptions = new HashMap<>();
-    
+
     // Leaderboard storage
-private static final String LEADERBOARD_FILE = "leaderboard.txt";
-    
+    private static final String LEADERBOARD_FILE = "leaderboard.txt";
+    // Settings file
+    private static final String SETTINGS_FILE = "settings.properties";
+    private boolean showLeaderboardAfterGame = false;
 
     public MemoryGame() {
         super("DWCC Memory Game");
@@ -88,8 +96,7 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
         createMainMenuPanel();
         createPauseMenuPanel();
 
-        
-        
+        loadSettings(); // load showLeaderboardAfterGame
 
         // show new fade-in welcome screen (Option B: replaces previous popup)
         SwingUtilities.invokeLater(() -> {
@@ -102,12 +109,13 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
 
         setVisible(true);
     }
+
     private void createMainMenuPanel() {
         mainMenuPanel = new JPanel();
-        mainMenuPanel.setLayout(new GridLayout(5, 1, 10, 10));
+        mainMenuPanel.setLayout(new GridLayout(6, 1, 10, 10));
         mainMenuPanel.setBorder(new EmptyBorder(40, 40, 40, 40));
         mainMenuPanel.setBackground(Color.WHITE);
-        
+
         JButton resumeBtn = new JButton("Resume Game");
         JButton newGameBtn = new JButton("Start New Game");
         JButton leaderboardBtn = new JButton("Leaderboard");
@@ -115,7 +123,6 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
         JButton exitBtn = new JButton("Exit Game");
         JButton resetLeaderboardBtn = new JButton("Reset Leaderboard");
 
-        
         styleControlButton(resumeBtn);
         styleControlButton(newGameBtn);
         styleControlButton(leaderboardBtn);
@@ -123,15 +130,13 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
         styleControlButton(exitBtn);
         styleControlButton(resetLeaderboardBtn);
 
-        
         resumeBtn.addActionListener(e -> returnToGameScreen());
         newGameBtn.addActionListener(e -> restartLevel());
-        leaderboardBtn.addActionListener(e -> showLeaderboard());
-        //settingsBtn.addActionListener(e -> showSettingsMenu());
+        leaderboardBtn.addActionListener(e -> showLeaderboardDialog());
+        settingsBtn.addActionListener(e -> showSettingsDialog());
         exitBtn.addActionListener(e -> System.exit(0));
         resetLeaderboardBtn.addActionListener(e -> resetLeaderboard());
 
-        
         mainMenuPanel.add(resumeBtn);
         mainMenuPanel.add(newGameBtn);
         mainMenuPanel.add(leaderboardBtn);
@@ -139,13 +144,13 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
         mainMenuPanel.add(resetLeaderboardBtn);
         mainMenuPanel.add(exitBtn);
     }
-    
+
     private void createPauseMenuPanel() {
         pauseMenuPanel = new JPanel();
-        pauseMenuPanel.setLayout(new GridLayout(5, 1, 10, 10));
+        pauseMenuPanel.setLayout(new GridLayout(6, 1, 10, 10));
         pauseMenuPanel.setBorder(new EmptyBorder(40, 40, 40, 40));
         pauseMenuPanel.setBackground(Color.WHITE);
-        
+
         JButton resumeBtn = new JButton("Resume Game");
         JButton newGameBtn = new JButton("Start New Game");
         JButton leaderboardBtn = new JButton("Leaderboard");
@@ -153,7 +158,6 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
         JButton exitBtn = new JButton("Exit Game");
         JButton resetLeaderboardBtn = new JButton("Reset Leaderboard");
 
-        
         styleControlButton(resumeBtn);
         styleControlButton(newGameBtn);
         styleControlButton(leaderboardBtn);
@@ -161,15 +165,13 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
         styleControlButton(exitBtn);
         styleControlButton(resetLeaderboardBtn);
 
-        
         resumeBtn.addActionListener(e -> returnToGameScreen());
         newGameBtn.addActionListener(e -> restartLevel());
-        leaderboardBtn.addActionListener(e -> showLeaderboard());
-        //settingsBtn.addActionListener(e -> showSettingsMenu());
+        leaderboardBtn.addActionListener(e -> showLeaderboardDialog());
+        settingsBtn.addActionListener(e -> showSettingsDialog());
         exitBtn.addActionListener(e -> System.exit(0));
         resetLeaderboardBtn.addActionListener(e -> resetLeaderboard());
 
-        
         pauseMenuPanel.add(resumeBtn);
         pauseMenuPanel.add(newGameBtn);
         pauseMenuPanel.add(leaderboardBtn);
@@ -177,8 +179,6 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
         pauseMenuPanel.add(resetLeaderboardBtn);
         pauseMenuPanel.add(exitBtn);
     }
-
-
 
     private void createDescriptions() {
         descriptions.put("SIT", "School of Information Technology — The academic unit that trains future IT professionals.");
@@ -227,24 +227,15 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
         descriptions.put("SVD Co-Missionary", "SVD Co-Missionary — Religious volunteer and mission assistance group.");
     }
 
-    /**
-     * REPLACED: this method now shows a polished, fade-in welcome dialog (with online logo & online sound).
-     * It is modal and returns true if the player entered a name and started, false if they chose to exit.
-     *
-     * This replaces your old dialog (Option B) — the rest of your game code is unchanged.
-     */
     private boolean showWelcomeScreenAndGetName() {
-        // Create modal dialog that will block until user closes/starts
         final JDialog dialog = new JDialog((Frame) null, "Welcome to DWCC Memory Game", true);
-        dialog.setUndecorated(true); // make it look like an intro screen
+        dialog.setUndecorated(true);
         dialog.getContentPane().setBackground(WINDOW_BG);
 
         JPanel root = new JPanel(new BorderLayout(12,12));
         root.setBorder(new EmptyBorder(18,18,18,18));
         root.setBackground(WINDOW_BG);
 
-        // --- Logo (online placeholder) ---
-        // You chose option B — using an online image (placeholder). Replace URL if you want another image.
         String logoUrl = "https://upload.wikimedia.org/wikipedia/commons/8/86/Divine_Word_College_of_Calapan_seal.png";
         JLabel logoLabel = new JLabel("", SwingConstants.CENTER);
         try {
@@ -252,21 +243,18 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
             Image img = icon.getImage().getScaledInstance(160, 160, Image.SCALE_SMOOTH);
             logoLabel.setIcon(new ImageIcon(img));
         } catch (Exception ex) {
-            // If online image fails, we just skip the icon (fall back to text)
             logoLabel.setText("DWCC");
             logoLabel.setFont(logoLabel.getFont().deriveFont(Font.BOLD, 28f));
             System.out.println("Logo load failed: " + ex.getMessage());
         }
         root.add(logoLabel, BorderLayout.NORTH);
 
-        // --- Title & Tagline ---
         JLabel title = new JLabel("<html><center>⭐ DWCC MEMORY QUEST ⭐<br><i>Test your memory. Discover DWCC. Conquer all levels.</i></center></html>", SwingConstants.CENTER);
         title.setForeground(HEADER_FOOTER);
         title.setFont(new Font("SansSerif", Font.BOLD, 18));
         title.setBackground(WINDOW_BG);
         root.add(title, BorderLayout.CENTER);
 
-        // --- Input area (name) + instructions ---
         JPanel bottom = new JPanel(new BorderLayout(8,8));
         bottom.setBackground(WINDOW_BG);
 
@@ -289,13 +277,10 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
         inputRow.add(nameLbl);
         inputRow.add(nameField);
         bottom.add(inputRow, BorderLayout.CENTER);
-        
-
 
         JPanel btnRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 6));
         btnRow.setBackground(WINDOW_BG);
         JButton startBtn = new JButton("Start Adventure");
-        // Trigger startBtn when Enter is pressed
         nameField.addActionListener(e -> startBtn.doClick());
         JButton exitBtn = new JButton("Exit");
         styleControlButton(startBtn);
@@ -310,7 +295,6 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
         dialog.pack();
         dialog.setLocationRelativeTo(null);
 
-        // Play online background sound (placeholder). Replace with another URL if desired.
         String soundUrl = "https://www2.cs.uic.edu/~i101/SoundFiles/BabyElephantWalk60.wav";
         final Clip[] playingClip = new Clip[1];
         try {
@@ -318,16 +302,11 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
             playingClip[0] = playClipFromURL(su);
         } catch (Exception ex) {
             System.out.println("Could not play intro sound: " + ex.getMessage());
-            // not fatal — continue without sound
         }
 
-        // Fade-in effect using a Swing Timer
-        // set initial opacity (works on Java 7+ if OS supports it)
         try {
             dialog.setOpacity(0f);
-        } catch (UnsupportedOperationException uex) {
-            // ignore: some platforms may not support per-window opacity
-        }
+        } catch (UnsupportedOperationException uex) { }
 
         Timer fadeTimer = new Timer(30, null);
         fadeTimer.addActionListener(new ActionListener() {
@@ -338,9 +317,7 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
                 if (op > 1f) op = 1f;
                 try {
                     dialog.setOpacity(op);
-                } catch (Exception ex) {
-                    // ignore if unsupported
-                }
+                } catch (Exception ex) { }
                 if (op >= 1f) {
                     fadeTimer.stop();
                 }
@@ -349,7 +326,6 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
         fadeTimer.start();
 
         final boolean[] started = {false};
-        // Start button action
         startBtn.addActionListener(ev -> {
             String n = nameField.getText();
             if (n != null) n = n.trim();
@@ -359,7 +335,6 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
             }
             playerName = n;
             started[0] = true;
-            // stop sound if playing
             if (playingClip[0] != null && playingClip[0].isRunning()) {
                 playingClip[0].stop();
                 playingClip[0].close();
@@ -367,11 +342,9 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
             dialog.dispose();
         });
 
-        // Exit button action
         exitBtn.addActionListener(ev -> {
             int conf = JOptionPane.showConfirmDialog(dialog, "Exit game?", "Confirm Exit", JOptionPane.YES_NO_OPTION);
             if (conf == JOptionPane.YES_OPTION) {
-                // stop sound if playing
                 if (playingClip[0] != null && playingClip[0].isRunning()) {
                     playingClip[0].stop();
                     playingClip[0].close();
@@ -380,17 +353,11 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
             }
         });
 
-        // Show the modal dialog (this will block until disposed)
         dialog.setVisible(true);
 
-        // If dialog disposed without setting a name (or user closed), treat as no-start
         return started[0];
     }
 
-    /**
-     * Helper: plays a Clip from an online URL and returns the Clip (started).
-     * Caller should stop/close the clip when done.
-     */
     private Clip playClipFromURL(URL url) {
         try {
             AudioInputStream ais = AudioSystem.getAudioInputStream(url);
@@ -445,26 +412,26 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
         bottom.add(restartButton);
 
         add(bottom, BorderLayout.SOUTH);
-        
+
         JButton menuButton = new JButton("Main Menu");
         styleControlButton(menuButton);
         menuButton.addActionListener(e -> showMainMenu());
-        
+
         JButton pauseButton = new JButton("Pause");
         styleControlButton(pauseButton);
         pauseButton.addActionListener(e -> showPauseMenu());
-        
+
         bottom.add(menuButton);
         bottom.add(pauseButton);
 
     }
-    
+
     private void showMainMenu() {
         setContentPane(mainMenuPanel);
         revalidate();
         repaint();
     }
-    
+
     private void showPauseMenu() {
         if (countdownTimer != null && countdownTimer.isRunning()) {
             countdownTimer.stop();
@@ -473,19 +440,20 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
         revalidate();
         repaint();
     }
-    
+
     private void returnToGameScreen() {
         if (countdownTimer != null && timeLimitSeconds > 0) {
             countdownTimer.start();
         }
-        setContentPane(getContentPane()); // return to game panel
-        setContentPane(getRootPane().getContentPane());
-        setContentPane(boardPanel.getParent());
-        
+        // safer way to restore the original content pane: we keep board panel in CENTER; just set a root content
+        Container content = getContentPane();
+        setContentPane(new JPanel(new BorderLayout()));
+        getContentPane().setBackground(WINDOW_BG);
+        getContentPane().add(boardPanel, BorderLayout.CENTER);
+        getContentPane().add(infoLabel.getParent().getParent(), BorderLayout.NORTH); // may be brittle; but we set top in constructor
         revalidate();
         repaint();
     }
-
 
     private void styleControlButton(JButton btn) {
         btn.setBackground(Color.WHITE);
@@ -598,7 +566,6 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
                 String desc = descriptions.getOrDefault(key, "Part of the DWCC community.");
                 showInfoDialog("Match found!", "<html><b>" + key + "</b><br/><i>" + desc + "</i></html>");
 
-
                 if (timerWasRunning && timeRemaining > 0) {
                     countdownTimer.start();
                 }
@@ -628,7 +595,6 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
                 });
                 flipBackTimer.setRepeats(false);
                 flipBackTimer.start();
-
 
                 updateInfoLabels();
                 if (lives <= 0) {
@@ -669,6 +635,10 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
         String msg = String.format("%s, you LOST at Level %d!\nFinal Score: %d", player, level, score);
         saveScoreToLeaderboard();
 
+        // show leaderboard automatically if setting enabled
+        if (showLeaderboardAfterGame) {
+            showLeaderboardDialog();
+        }
 
         Object[] options = {"Play Again (Level 1)", "Exit"};
         int choice = JOptionPane.showOptionDialog(this, msg, "Game Over",
@@ -694,8 +664,13 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
 
         String player = (playerName == null || playerName.trim().isEmpty()) ? "Player" : playerName;
         String msg = String.format("%s, you WIN! You finished Level %d!\nFinal Score: %d", player, level, score);
-        
+
         saveScoreToLeaderboard();
+
+        // show leaderboard automatically if setting enabled
+        if (showLeaderboardAfterGame) {
+            showLeaderboardDialog();
+        }
 
         Object[] options = {"Play Again (Level 1)", "Exit"};
         int choice = JOptionPane.showOptionDialog(this, msg, "You Win!",
@@ -760,159 +735,277 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
         int ss = secs % 60;
         return String.format("%02d:%02d", mm, ss);
     }
-    
+
     private void showInfoDialog(String title, String message) {
-    final JOptionPane optionPane = new JOptionPane(message, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
-    final JDialog dialog = optionPane.createDialog(this, title);
+        final JOptionPane optionPane = new JOptionPane(message, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
+        final JDialog dialog = optionPane.createDialog(this, title);
 
-    // Make Enter key close the dialog
-    JButton okButton = null;
-    for (Component c : optionPane.getComponents()) {
-        if (c instanceof JButton) {
-            okButton = (JButton) c;
-            break;
+        JButton okButton = null;
+        for (Component c : optionPane.getComponents()) {
+            if (c instanceof JButton) {
+                okButton = (JButton) c;
+                break;
+            }
         }
-    }
-    if (okButton != null) {
-        dialog.getRootPane().setDefaultButton(okButton);
-    }
+        if (okButton != null) {
+            dialog.getRootPane().setDefaultButton(okButton);
+        }
 
-    dialog.setVisible(true);
-}
-
+        dialog.setVisible(true);
+    }
 
     private class CardButton extends JButton {
-    private String content;
-    private boolean faceUp = false;
-    private boolean matched = false;
+        private String content;
+        private boolean faceUp = false;
+        private boolean matched = false;
 
-    public CardButton(String content) {
-        super(" ");
-        this.content = content;
-        setFont(getFont().deriveFont(Font.BOLD, 14f));
-        setFocusPainted(false);
-        setForeground(PRIMARY_TEXT);
-        setBorder(new LineBorder(new Color(0xBDBDBD)));
-        setBackground(BOARD_BG); // make all cards same color initially
-    }
+        public CardButton(String content) {
+            super(" ");
+            this.content = content;
+            setFont(getFont().deriveFont(Font.BOLD, 14f));
+            setFocusPainted(false);
+            setForeground(PRIMARY_TEXT);
+            setBorder(new LineBorder(new Color(0xBDBDBD)));
+            setBackground(BOARD_BG);
+        }
 
-    public String getContent() { return content; }
-    public boolean isFaceUp() { return faceUp; }
-    public boolean isMatched() { return matched; }
+        public String getContent() { return content; }
+        public boolean isFaceUp() { return faceUp; }
+        public boolean isMatched() { return matched; }
 
-    public void setMatched(boolean m) {
-        matched = m;
-        setEnabled(!m);
-        // NO visual change for matched cards
-    }
+        public void setMatched(boolean m) {
+            matched = m;
+            setEnabled(!m);
+        }
 
-    public void showFace() {
-        faceUp = true;
-        setText("<html><center>" + content + "</center></html>");
-        // NO background change
-    }
+        public void showFace() {
+            faceUp = true;
+            setText("<html><center>" + content + "</center></html>");
+        }
 
-    public void hideFace() {
-        faceUp = false;
-        setText(" ");
-        // NO background change
-    }
-}
-
-
-    private void saveScoreToLeaderboard() {
-    try {
-        String timestamp = java.time.LocalDateTime.now()
-                .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-
-        String entry = playerName + " - " + score + " - " + timestamp + System.lineSeparator();
-
-        java.nio.file.Files.write(
-                java.nio.file.Paths.get(LEADERBOARD_FILE),
-                entry.getBytes(),
-                java.nio.file.StandardOpenOption.CREATE,
-                java.nio.file.StandardOpenOption.APPEND
-        );
-    } catch (IOException ex) {
-        System.out.println("Error saving leaderboard: " + ex.getMessage());
-    }
-}
-    
-    private void resetLeaderboard() {
-    int confirm = JOptionPane.showConfirmDialog(
-            this,
-            "Are you sure you want to CLEAR the leaderboard?",
-            "Confirm Reset",
-            JOptionPane.YES_NO_OPTION
-    );
-
-    if (confirm == JOptionPane.YES_OPTION) {
-        try {
-            java.nio.file.Files.write(
-                    java.nio.file.Paths.get(LEADERBOARD_FILE),
-                    "".getBytes(),
-                    java.nio.file.StandardOpenOption.TRUNCATE_EXISTING,
-                    java.nio.file.StandardOpenOption.CREATE
-            );
-            JOptionPane.showMessageDialog(this, "Leaderboard has been reset.");
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "Error resetting leaderboard.");
+        public void hideFace() {
+            faceUp = false;
+            setText(" ");
         }
     }
-}
 
-
-    
-    private List<String> loadLeaderboard() {
-    try {
-        return java.nio.file.Files.readAllLines(java.nio.file.Paths.get(LEADERBOARD_FILE));
-    } catch (IOException ex) {
-        return new ArrayList<>();
+    private void saveScoreToLeaderboard() {
+        try {
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            String entry = playerName + " - " + score + " - " + timestamp + System.lineSeparator();
+            Files.write(Paths.get(LEADERBOARD_FILE), entry.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        } catch (IOException ex) {
+            System.out.println("Error saving leaderboard: " + ex.getMessage());
+        }
     }
-}
 
+    private void resetLeaderboard() {
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to CLEAR the leaderboard?",
+                "Confirm Reset",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                Files.write(Paths.get(LEADERBOARD_FILE), "".getBytes(), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+                JOptionPane.showMessageDialog(this, "Leaderboard has been reset.");
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Error resetting leaderboard.");
+            }
+        }
+    }
+
+    private List<String> loadLeaderboardRaw() {
+        try {
+            if (!Files.exists(Paths.get(LEADERBOARD_FILE))) return new ArrayList<>();
+            return Files.readAllLines(Paths.get(LEADERBOARD_FILE));
+        } catch (IOException ex) {
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * New, improved leaderboard dialog with JTable, sortable columns, and automatic ranking.
+     */
+    private void showLeaderboardDialog() {
+        List<String> lines = loadLeaderboardRaw();
+        List<LeaderboardEntry> entries = new ArrayList<>();
+
+        for (String line : lines) {
+            // expected format: "Name - score - timestamp"
+            String[] parts = line.split("\\s*-\\s*");
+            if (parts.length >= 3) {
+                String name = parts[0].trim();
+                String scoreStr = parts[1].trim();
+                String timestamp = parts[2].trim();
+                // If timestamp contains extra hyphens (unlikely), rebuild it
+                if (parts.length > 3) {
+                    StringJoiner sj = new StringJoiner(" - ");
+                    for (int i = 2; i < parts.length; i++) sj.add(parts[i].trim());
+                    timestamp = sj.toString();
+                }
+                int s = 0;
+                try {
+                    s = Integer.parseInt(scoreStr);
+                } catch (NumberFormatException nfe) {
+                    // skip malformed score entries gracefully
+                    continue;
+                }
+                entries.add(new LeaderboardEntry(name, s, timestamp));
+            }
+        }
+
+        if (entries.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No leaderboard data yet.");
+            return;
+        }
+
+        // Sort by score desc by default
+        entries.sort((a, b) -> Integer.compare(b.score, a.score));
+
+        // Build table model with automatic rank numbers
+        String[] columns = {"Rank", "Player", "Score", "Timestamp"};
+        DefaultTableModel model = new DefaultTableModel(columns, 0) {
+            @Override public boolean isCellEditable(int row, int column) { return false; }
+            @Override public Class<?> getColumnClass(int columnIndex) {
+                if (columnIndex == 0 || columnIndex == 2) return Integer.class;
+                return String.class;
+            }
+        };
+
+        int rank = 1;
+        for (LeaderboardEntry e : entries) {
+            model.addRow(new Object[]{rank++, e.name, e.score, e.timestamp});
+        }
+
+        JTable table = new JTable(model);
+        table.setFillsViewportHeight(true);
+        table.setAutoCreateRowSorter(true);
+        table.setRowHeight(24);
+
+        // Enable sorting with proper comparator for integers (score / rank)
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+        sorter.setComparator(0, Comparator.comparingInt(o -> (Integer)o));
+        sorter.setComparator(2, Comparator.comparingInt(o -> (Integer)o));
+        table.setRowSorter(sorter);
+
+        // Visual tweaks
+        table.getTableHeader().setReorderingAllowed(false);
+        table.getColumnModel().getColumn(0).setMaxWidth(60);
+        table.getColumnModel().getColumn(2).setMaxWidth(100);
+
+        JScrollPane scroll = new JScrollPane(table);
+        scroll.setPreferredSize(new Dimension(600, 350));
+
+        // Dialog with buttons
+        JDialog dlg = new JDialog(this, "Leaderboard — Top Players", true);
+        dlg.setLayout(new BorderLayout(8,8));
+        dlg.add(scroll, BorderLayout.CENTER);
+
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton closeBtn = new JButton("Close");
+        JButton exportBtn = new JButton("Export CSV");
+        JButton clearBtn = new JButton("Clear Leaderboard");
+        bottom.add(exportBtn);
+        bottom.add(clearBtn);
+        bottom.add(closeBtn);
+        dlg.add(bottom, BorderLayout.SOUTH);
+
+        closeBtn.addActionListener(ev -> dlg.dispose());
+        exportBtn.addActionListener(ev -> {
+            try {
+                JFileChooser fc = new JFileChooser();
+                fc.setDialogTitle("Export leaderboard to CSV");
+                if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+                    File sel = fc.getSelectedFile();
+                    if (!sel.getName().toLowerCase().endsWith(".csv")) sel = new File(sel.getAbsolutePath() + ".csv");
+                    try (FileWriter fw = new FileWriter(sel)) {
+                        fw.write(String.join(",", columns) + System.lineSeparator());
+                        for (int r = 0; r < model.getRowCount(); r++) {
+                            Object rankObj = model.getValueAt(r, 0);
+                            Object playerObj = model.getValueAt(r, 1);
+                            Object scoreObj = model.getValueAt(r, 2);
+                            Object tsObj = model.getValueAt(r, 3);
+                            fw.write(String.format("%s,%s,%s,%s%n",
+                                    rankObj.toString(), playerObj.toString(), scoreObj.toString(), tsObj.toString()));
+                        }
+                    }
+                    JOptionPane.showMessageDialog(this, "Exported successfully.");
+                }
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Export failed: " + ex.getMessage());
+            }
+        });
+        clearBtn.addActionListener(ev -> {
+            int conf = JOptionPane.showConfirmDialog(dlg, "Clear entire leaderboard?", "Confirm", JOptionPane.YES_NO_OPTION);
+            if (conf == JOptionPane.YES_OPTION) {
+                try {
+                    Files.write(Paths.get(LEADERBOARD_FILE), "".getBytes(), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+                    JOptionPane.showMessageDialog(dlg, "Leaderboard cleared.");
+                    dlg.dispose();
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(dlg, "Could not clear leaderboard: " + ex.getMessage());
+                }
+            }
+        });
+
+        dlg.pack();
+        dlg.setLocationRelativeTo(this);
+        dlg.setVisible(true);
+    }
+
+    private static class LeaderboardEntry {
+        String name;
+        int score;
+        String timestamp;
+        LeaderboardEntry(String n, int s, String t) { name = n; score = s; timestamp = t; }
+    }
+
+    private void loadSettings() {
+        Properties p = new Properties();
+        try {
+            File f = new File(SETTINGS_FILE);
+            if (f.exists()) {
+                try (FileReader fr = new FileReader(f)) {
+                    p.load(fr);
+                }
+            }
+            String val = p.getProperty("showLeaderboardAfterGame", "false");
+            showLeaderboardAfterGame = Boolean.parseBoolean(val);
+        } catch (Exception ex) {
+            System.out.println("Failed to load settings: " + ex.getMessage());
+            showLeaderboardAfterGame = false;
+        }
+    }
+
+    private void saveSettings() {
+        Properties p = new Properties();
+        p.setProperty("showLeaderboardAfterGame", Boolean.toString(showLeaderboardAfterGame));
+        try (FileWriter fw = new FileWriter(SETTINGS_FILE)) {
+            p.store(fw, "MemoryGame settings");
+        } catch (IOException ex) {
+            System.out.println("Failed to save settings: " + ex.getMessage());
+        }
+    }
+
+    private void showSettingsDialog() {
+        JCheckBox autoShow = new JCheckBox("Show leaderboard automatically after each finished game", showLeaderboardAfterGame);
+        JPanel panel = new JPanel(new BorderLayout(6,6));
+        panel.setBorder(new EmptyBorder(8,8,8,8));
+        panel.add(new JLabel("<html><b>Settings</b></html>"), BorderLayout.NORTH);
+        panel.add(autoShow, BorderLayout.CENTER);
+
+        int res = JOptionPane.showConfirmDialog(this, panel, "Settings", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (res == JOptionPane.OK_OPTION) {
+            showLeaderboardAfterGame = autoShow.isSelected();
+            saveSettings();
+            JOptionPane.showMessageDialog(this, "Settings saved.");
+        }
+    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new MemoryGame());
     }
-    
-    private void showLeaderboard() {
-    List<String> scores = loadLeaderboard();
-
-    if (scores.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "No leaderboard data yet.");
-        return;
-    }
-
-    // Sort scores (highest first)
-    scores.sort((a, b) -> {
-        int scoreA = Integer.parseInt(a.substring(a.lastIndexOf("-") + 1).trim());
-        int scoreB = Integer.parseInt(b.substring(b.lastIndexOf("-") + 1).trim());
-        return Integer.compare(scoreB, scoreA);
-    });
-
-    StringBuilder sb = new StringBuilder();
-    sb.append("🏆 TOP PLAYERS 🏆\n\n");
-    int rank = 1;
-    for (String entry : scores) {
-        sb.append(rank++).append(". ").append(entry).append("\n");
-        if (rank > 20) break; // show top 20 only
-    }
-
-    JTextArea area = new JTextArea(sb.toString());
-    area.setEditable(false);
-    area.setFont(new Font("Monospaced", Font.PLAIN, 14));
-    area.setMargin(new Insets(10,10,10,10));
-
-    JScrollPane scroll = new JScrollPane(area);
-    scroll.setPreferredSize(new Dimension(350, 300));
-
-    JOptionPane.showMessageDialog(this, scroll, "Leaderboard", JOptionPane.INFORMATION_MESSAGE);
 }
-
-    }
-    
-   // private void showSettingsMenu() {
-      //  JOptionPane.showMessageDialog(this, "Settings coming soon...");
-   // }
-//}
