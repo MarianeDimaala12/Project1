@@ -10,6 +10,11 @@ import javax.sound.sampled.*;    // ADDED for audio
 import java.net.URL;            // ADDED for online resources
 import java.io.IOException;     // ADDED for audio handling
 import javax.swing.Timer;
+import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.File;
+
 
 public class MemoryGame extends JFrame {
 
@@ -108,23 +113,30 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
         JButton leaderboardBtn = new JButton("Leaderboard");
         JButton settingsBtn = new JButton("Settings");
         JButton exitBtn = new JButton("Exit Game");
+        JButton resetLeaderboardBtn = new JButton("Reset Leaderboard");
+
         
         styleControlButton(resumeBtn);
         styleControlButton(newGameBtn);
         styleControlButton(leaderboardBtn);
         styleControlButton(settingsBtn);
         styleControlButton(exitBtn);
+        styleControlButton(resetLeaderboardBtn);
+
         
         resumeBtn.addActionListener(e -> returnToGameScreen());
         newGameBtn.addActionListener(e -> restartLevel());
         leaderboardBtn.addActionListener(e -> showLeaderboard());
         //settingsBtn.addActionListener(e -> showSettingsMenu());
         exitBtn.addActionListener(e -> System.exit(0));
+        resetLeaderboardBtn.addActionListener(e -> resetLeaderboard());
+
         
         mainMenuPanel.add(resumeBtn);
         mainMenuPanel.add(newGameBtn);
         mainMenuPanel.add(leaderboardBtn);
         mainMenuPanel.add(settingsBtn);
+        mainMenuPanel.add(resetLeaderboardBtn);
         mainMenuPanel.add(exitBtn);
     }
     
@@ -139,23 +151,30 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
         JButton leaderboardBtn = new JButton("Leaderboard");
         JButton settingsBtn = new JButton("Settings");
         JButton exitBtn = new JButton("Exit Game");
+        JButton resetLeaderboardBtn = new JButton("Reset Leaderboard");
+
         
         styleControlButton(resumeBtn);
         styleControlButton(newGameBtn);
         styleControlButton(leaderboardBtn);
         styleControlButton(settingsBtn);
         styleControlButton(exitBtn);
+        styleControlButton(resetLeaderboardBtn);
+
         
         resumeBtn.addActionListener(e -> returnToGameScreen());
         newGameBtn.addActionListener(e -> restartLevel());
         leaderboardBtn.addActionListener(e -> showLeaderboard());
         //settingsBtn.addActionListener(e -> showSettingsMenu());
         exitBtn.addActionListener(e -> System.exit(0));
+        resetLeaderboardBtn.addActionListener(e -> resetLeaderboard());
+
         
         pauseMenuPanel.add(resumeBtn);
         pauseMenuPanel.add(newGameBtn);
         pauseMenuPanel.add(leaderboardBtn);
         pauseMenuPanel.add(settingsBtn);
+        pauseMenuPanel.add(resetLeaderboardBtn);
         pauseMenuPanel.add(exitBtn);
     }
 
@@ -803,9 +822,14 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
 
     private void saveScoreToLeaderboard() {
     try {
+        String timestamp = java.time.LocalDateTime.now()
+                .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+        String entry = playerName + " - " + score + " - " + timestamp + System.lineSeparator();
+
         java.nio.file.Files.write(
                 java.nio.file.Paths.get(LEADERBOARD_FILE),
-                (playerName + " - " + score + System.lineSeparator()).getBytes(),
+                entry.getBytes(),
                 java.nio.file.StandardOpenOption.CREATE,
                 java.nio.file.StandardOpenOption.APPEND
         );
@@ -813,6 +837,31 @@ private static final String LEADERBOARD_FILE = "leaderboard.txt";
         System.out.println("Error saving leaderboard: " + ex.getMessage());
     }
 }
+    
+    private void resetLeaderboard() {
+    int confirm = JOptionPane.showConfirmDialog(
+            this,
+            "Are you sure you want to CLEAR the leaderboard?",
+            "Confirm Reset",
+            JOptionPane.YES_NO_OPTION
+    );
+
+    if (confirm == JOptionPane.YES_OPTION) {
+        try {
+            java.nio.file.Files.write(
+                    java.nio.file.Paths.get(LEADERBOARD_FILE),
+                    "".getBytes(),
+                    java.nio.file.StandardOpenOption.TRUNCATE_EXISTING,
+                    java.nio.file.StandardOpenOption.CREATE
+            );
+            JOptionPane.showMessageDialog(this, "Leaderboard has been reset.");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error resetting leaderboard.");
+        }
+    }
+}
+
+
     
     private List<String> loadLeaderboard() {
     try {
