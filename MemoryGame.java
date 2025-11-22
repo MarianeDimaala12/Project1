@@ -803,16 +803,34 @@ public class MemoryGame extends JFrame {
     }
 
     private void saveScoreToLeaderboard() {
-        try {
-            String timestamp = LocalDateTime.now()
-        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd   |   hh:mm a"));
+    try {
+        String date = LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a"));
 
-            String entry = playerName + " - " + score + " - " + timestamp + System.lineSeparator();
-            Files.write(Paths.get(LEADERBOARD_FILE), entry.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-        } catch (IOException ex) {
-            System.out.println("Error saving leaderboard: " + ex.getMessage());
-        }
+        int timeUsed = timeLimitSeconds > 0
+                ? (timeLimitSeconds - timeRemaining)
+                : 0;
+
+        String entry = playerName + "|" +
+                       score + "|" +
+                       level + "|" +
+                       lives + "|" +
+                       matchesFound + "|" +
+                       timeUsed + "|" +
+                       date + System.lineSeparator();
+
+        Files.write(
+                Paths.get(LEADERBOARD_FILE),
+                entry.getBytes(),
+                StandardOpenOption.CREATE,
+                StandardOpenOption.APPEND
+        );
+
+    } catch (IOException ex) {
+        System.out.println("Error saving leaderboard: " + ex.getMessage());
     }
+}
+
 
     private void resetLeaderboard() {
         int confirm = JOptionPane.showConfirmDialog(
@@ -846,113 +864,58 @@ public class MemoryGame extends JFrame {
      * New, improved leaderboard dialog with JTable, sortable columns, and automatic ranking.
      */
     private void showLeaderboardDialog() {
-        List<String> lines = loadLeaderboardRaw();
-        List<LeaderboardEntry> entries = new ArrayList<>();
+    java.util.List<String[]> rows = new ArrayList<>();
 
-        for (String line : lines) {
-            // expected format: "Name - score - timestamp"
-            String[] parts = line.split("\\s*-\\s*");
-            if (parts.length >= 3) {
-                String name = parts[0].trim();
-                String scoreStr = parts[1].trim();
-                String timestamp = parts[2].trim();
-                // If timestamp contains extra hyphens (unlikely), rebuild it
-                if (parts.length > 3) {
-                    StringJoiner sj = new StringJoiner(" - ");
-                    for (int i = 2; i < parts.length; i++) sj.add(parts[i].trim());
-                    timestamp = sj.toString();
-                }
-                int s = 0;
-                try {
-                    s = Integer.parseInt(scoreStr);
-                } catch (NumberFormatException nfe) {
-                    // skip malformed score entries gracefully
-                    continue;
-                }
-                entries.add(new LeaderboardEntry(name, s, timestamp));
+    try (BufferedReader br = new BufferedReader(new FileReader(LEADERBOARD_FILE))) {
+        String line;
+        while ((line = br.readLine()) != null) {
+            String[] parts = line.split("\\|");
+            if (parts.length == 7) {
+                rows.add(parts);
             }
         }
+    } catch (Exception ex) {
+        System.out.println("Leaderboard read error: " + ex.getMessage());
+    }
 
-        if (entries.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No leaderboard data yet.");
-            return;
-        }
+    rows.sort((a, b) -> Integer.compare(Integer.parseInt(b[1]), Integer.parseInt(a[1])));
 
-        // Sort by score desc by default
-        entries.sort((a, b) -> Integer.compare(b.score, a.score));
+    String[] columnNames = {
+            "Rank", "Name", "Score", "Level Reached", "Lives Left",
+            "Matches Made", "Time Consumed", "Date"
+    };
 
-        // Build table model with automatic rank numbers
-        String[] columns = {"Rank", "Player", "Score", "Timestamp"};
-        DefaultTableModel model = new DefaultTableModel(columns, 0) {
-            @Override public boolean isCellEditable(int row, int column) { return false; }
-            @Override public Class<?> getColumnClass(int columnIndex) {
-                if (columnIndex == 0 || columnIndex == 2) return Integer.class;
-                return String.class;
-            }
-        };
+    Object[][] data = new Object[rows.size()][8];
+    int rank = 1;
 
-        int rank = 1;
-        for (LeaderboardEntry e : entries) {
-            model.addRow(new Object[]{rank++, e.name, e.score, e.timestamp});
-        }
+    for (int i = 0; i < rows.size(); i++) {
+        String[] r = rows.get(i);
+        data[i][0] = rank++;
+        data[i][1] = r[0];
+        data[i][2] = r[1];
+        data[i][3] = r[2];
+        data[i][4] = r[3];
+        data[i][5] = r[4];
+        data[i][6] = r[5] + " sec";
+        data[i][7] = r[6];
+    }
 
-        JTable table = new JTable(model);
-        table.setFillsViewportHeight(true);
-        table.setAutoCreateRowSorter(true);
-        table.setRowHeight(24);
-        
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-    centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+    JTable table = new JTable(data, columnNames);
+    table.setEnabled(false);
 
+    table.setRowHeight(25);
+    DefaultTableCellRenderer center = new DefaultTableCellRenderer();
+    center.setHorizontalAlignment(SwingConstants.CENTER);
     for (int i = 0; i < table.getColumnCount(); i++) {
-        table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(i).setCellRenderer(center);
     }
 
+    JScrollPane scroll = new JScrollPane(table);
+    scroll.setPreferredSize(new Dimension(800, 300));
 
-        // Enable sorting with proper comparator for integers (score / rank)
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-        sorter.setComparator(0, Comparator.comparingInt(o -> (Integer)o));
-        sorter.setComparator(2, Comparator.comparingInt(o -> (Integer)o));
-        table.setRowSorter(sorter);
+    JOptionPane.showMessageDialog(this, scroll, "Leaderboard", JOptionPane.PLAIN_MESSAGE);
+}
 
-        // Visual tweaks
-        table.getTableHeader().setReorderingAllowed(false);
-        table.getColumnModel().getColumn(0).setMaxWidth(60);
-        table.getColumnModel().getColumn(2).setMaxWidth(100);
-
-        JScrollPane scroll = new JScrollPane(table);
-        scroll.setPreferredSize(new Dimension(600, 350));
-
-        // Dialog with buttons
-        JDialog dlg = new JDialog(this, "Leaderboard — Top Players", true);
-        dlg.setLayout(new BorderLayout(8,8));
-        dlg.add(scroll, BorderLayout.CENTER);
-
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton closeBtn = new JButton("Close");
-        JButton clearBtn = new JButton("Clear Leaderboard");
-        bottom.add(clearBtn);
-        bottom.add(closeBtn);
-        dlg.add(bottom, BorderLayout.SOUTH);
-
-        closeBtn.addActionListener(ev -> dlg.dispose());
-        clearBtn.addActionListener(ev -> {
-            int conf = JOptionPane.showConfirmDialog(dlg, "Clear entire leaderboard?", "Confirm", JOptionPane.YES_NO_OPTION);
-            if (conf == JOptionPane.YES_OPTION) {
-                try {
-                    Files.write(Paths.get(LEADERBOARD_FILE), "".getBytes(), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
-                    JOptionPane.showMessageDialog(dlg, "Leaderboard cleared.");
-                    dlg.dispose();
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(dlg, "Could not clear leaderboard: " + ex.getMessage());
-                }
-            }
-        });
-
-        dlg.pack();
-        dlg.setLocationRelativeTo(this);
-        dlg.setVisible(true);
-    }
 
     private static class LeaderboardEntry {
         String name;
