@@ -21,6 +21,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 import java.util.Properties;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.SwingConstants; // optional — already covered by javax.swing.* but explicit helps clarity
+
 
 public class MemoryGame extends JFrame {
 
@@ -801,7 +804,9 @@ public class MemoryGame extends JFrame {
 
     private void saveScoreToLeaderboard() {
         try {
-            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            String timestamp = LocalDateTime.now()
+        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd   |   hh:mm a"));
+
             String entry = playerName + " - " + score + " - " + timestamp + System.lineSeparator();
             Files.write(Paths.get(LEADERBOARD_FILE), entry.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (IOException ex) {
@@ -895,6 +900,14 @@ public class MemoryGame extends JFrame {
         table.setFillsViewportHeight(true);
         table.setAutoCreateRowSorter(true);
         table.setRowHeight(24);
+        
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+    centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+
+    for (int i = 0; i < table.getColumnCount(); i++) {
+        table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+    }
+
 
         // Enable sorting with proper comparator for integers (score / rank)
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
