@@ -182,6 +182,58 @@ public class MemoryGame extends JFrame {
         pauseMenuPanel.add(resetLeaderboardBtn);
         pauseMenuPanel.add(exitBtn);
     }
+    
+    private Map<String, String> cardImages = new HashMap<>();
+
+private void createCardImages() {
+        cardImages.put("SIT", "https://drive.google.com/file/d/12C34UeTLTawd-sHXfqae6pMfmr9z_vBy/view?usp=drive_link");
+        cardImages.put("JPCS", "https://drive.google.com/file/d/18_SFpsHkzdHO3JatRDLXP720WPJVQcP9/view?usp=drive_link");
+        cardImages.put("SOE", "https://drive.google.com/file/d/1GB27bkTqAwk_-P_dBbOpToyzy8CjpLZ5/view?usp=drive_link");
+        cardImages.put("SOA", "https://drive.google.com/file/d/1YO81BFl7rRRpybRByusQd9eMe-0HDMQj/view?usp=drive_link");
+        
+        cardImages.put("TDG", "https://drive.google.com/file/d/1LAvuSvOuuH3ZP6BBdvleXctl4AkX4861/view?usp=sharing");
+        cardImages.put("TAJ", "https://drive.google.com/file/d/1jJdlmt9StJ82WBpTO8Qb6DOUi_te8wxV/view?usp=sharing");
+        cardImages.put("GTS", "https://drive.google.com/file/d/1FSYJ5iuubUCLqCbAa1kWi0xX5g-9dg7O/view?usp=sharing");
+        cardImages.put("Halcons", "https://drive.google.com/file/d/171jgtLzTwPNCKqBIiYlyTY0za8Sz1jDR/view?usp=sharing");
+        cardImages.put("SBHTM", "https://drive.google.com/file/d/1jny3rfbZK3W-QHp4kTqjT-uPKWhwGntW/view?usp=sharing");
+        cardImages.put("SAFA", "https://drive.google.com/file/d/1wGZLe_QREplPHsMcWTa-1MmYstrFILz1/view?usp=sharing");
+        
+        cardImages.put("SE", "https://drive.google.com/file/d/1gTFSCoijoqqI-4x0N8SfrbGfWd9rgZGQ/view?usp=sharing");
+        cardImages.put("SAS", "https://drive.google.com/file/d/1P7HcMHRTUzYSMNjjtKDLr1zBPPOAqPkb/view?usp=sharing");
+        cardImages.put("SCJ", "https://drive.google.com/file/d/19FwFD0WlGmPM7NJd3ZvTUCN7_BxMte0u/view?usp=sharing");
+        cardImages.put("SC", "https://drive.google.com/file/d/1yHz587hPktqTqC_N1XahPEpsxHrDt8jk/view?usp=sharing");
+        cardImages.put("SEB", "https://drive.google.com/file/d/1EjHCX1lmurc2GC4_0R8lolXqjfmI2Oqy/view?usp=sharing");
+        cardImages.put("OBRA", "https://drive.google.com/file/d/1VyH4PIExUwahR7K5DdoX23T8DTSvvo8F/view?usp=sharing");
+        cardImages.put("DDC", "https://drive.google.com/file/d/1M5u7DdOzRgEIY20c-_hTeWrvPFZDGBgr/view?usp=sharing");
+        cardImages.put("Musika Divinista", "https://drive.google.com/file/d/1UpL1mbF00YXY1VQld-91e11x0I6Kvrsa/view?usp=sharing");
+        
+        cardImages.put("Ms. DWCC Organization", "https://drive.google.com/file/d/1-mSpQKz_9SohhWfqNFKRHz191Tns-msq/view?usp=sharing");
+        cardImages.put("SAO", "https://drive.google.com/file/d/1VenUfytZ63XRvbG_O16TmFFxDtfLxjf7/view?usp=sharing");
+        cardImages.put("SAYM", "https://drive.google.com/file/d/1kQKP8UDecJkLMZeipqH_OHwFcaykSIK6/view?usp=sharing");
+        cardImages.put("Phoenix Debate Club", "https://drive.google.com/file/d/1bEv23kno8Nwjw65tryvMFlyxGeFMBhRS/view?usp=sharing");
+        cardImages.put("DivinisTanghalan", "https://drive.google.com/file/d/1ofwnt0VErxZB5by6eQSsYgq45mm9DCxl/view?usp=sharing");
+        cardImages.put("DWCC Saver-G", "https://drive.google.com/file/d/12AU3kQ__vuUQ_LGx3GWAQ03dLYBnozKy/view?usp=sharing");
+        cardImages.put("Peer Facilitators' Club", "https://drive.google.com/file/d/1WviXP53jSVkKeXozRLtfz-UicbTUIhfR/view?usp=sharing");
+        cardImages.put("Mangyan Student Organization", "https://drive.google.com/file/d/1MH6MZ_N7Q1QcyuE0VGggCrKmiBxZ6UdM/view?usp=sharing");
+        cardImages.put("DWCC Rotaract Club of Calapan", "https://drive.google.com/file/d/1ZNZCryfxmCnQyneceb89_p56bSBGR_La/view?usp=sharing");
+        cardImages.put("UAPSA", "https://drive.google.com/file/d/1kGv6uWMiOf3DGF20pQdva4IW6z4nXwe-/view?usp=sharing");
+        
+        cardImages.put("PICE", "https://drive.google.com/file/d/1T5Tq41TAq8X0IWLQlyCiFh7zqL4JmuSG/view?usp=sharing"); 
+        cardImages.put("Association of Student Grantees", "https://drive.google.com/file/d/1RdYCDdWY1l3G-3qoIQq_U7yUiqOvVlhP/view?usp=sharing");
+        cardImages.put("ATEMS", "https://drive.google.com/file/d/1J9VAHyz8FZSGVe5Hz4CNAzzmksG1oT1k/view?usp=sharing");
+        cardImages.put("AJE", "https://drive.google.com/file/d/12C34UeTLTawd-sHXfqae6pMfmr9z_vBy/view?usp=sharing");
+        cardImages.put("AMMS", "https://drive.google.com/file/d/1d_ValNb2CtLool9eAKdNjSZtS6SNPVqM/view?usp=sharing");
+        cardImages.put("CELTS", "https://drive.google.com/file/d/1_taJW5xaMgGQTGJ7q22NB5HgkuN5S5Ce/view?usp=sharing");
+        cardImages.put("AJPS", "https://drive.google.com/file/d/1UvpRTmTUqrnbHMJ-VLzV6One2j0E_M6M/view?usp=sharing");
+        cardImages.put("JIECEP", "https://drive.google.com/file/d/1XllnhA_VM3AnF_bT600Fu0KAK0AYVXTu/view?usp=sharing");
+        cardImages.put("LIA", "https://drive.google.com/file/d/1758bB-gzrBrPiwjE76fCYRVUw47hpakt/view?usp=sharing");
+        cardImages.put("SYFINEX", "https://drive.google.com/file/d/1kX6pCng0zT7FGBUgwzFTP-Likif0L02g/view?usp=sharing");
+        cardImages.put("JPIA", "https://drive.google.com/file/d/1-hL1cKDOklAqa8el7AaEbBxw6QyCVBCv/view?usp=sharing");
+        cardImages.put("SVD Co-Missionary", "https://drive.google.com/file/d/1n09R2pDyNvQCDZVS6ydxakOgdSPG3_U4/view?usp=sharing");
+
+        // Add the rest similarly...
+    }
+
 
     private void createDescriptions() {
         descriptions.put("SIT", "School of Information Technology — The academic unit that trains future IT professionals.");
@@ -214,17 +266,17 @@ public class MemoryGame extends JFrame {
         descriptions.put("Peer Facilitators' Club", "Peer support and counseling advocacy group.");
         descriptions.put("Mangyan Student Organization", "Organization of DWCC students belonging to the Mangyan tribes.");
         descriptions.put("DWCC Rotaract Club of Calapan", "Community service club affiliated with Rotary International.");
-        descriptions.put("Missionary Families of Christ", "Faith-based evangelization and service organization.");
+        descriptions.put("UAPSA", "United Architects of the Philippines Students Auxiliary - Student group for future architects, promoting design skills and professional growth.");
 
-        descriptions.put("DWCC Brass Band", "Official ceremonial band of DWCC for music and parades.");
+        descriptions.put("PICE", "Philippine Institute of Civil Engineers - Student organization for aspiring civil engineers, promoting skills and professional development.");
         descriptions.put("Association of Student Grantees", "Organization for scholarship and grant beneficiaries.");
         descriptions.put("ATEMS", "Alliance for Transformative Education through Mathematics and Science — STEM academic organization.");
         descriptions.put("AJE", "Association of Junior Executives — Business administration student group.");
         descriptions.put("AMMS", "Association of Marketing Management Students — Business and marketing events group.");
-        descriptions.put("CELT", "Childhood Education and Language Teaching — Organization for future preschool and language educators.");
-        descriptions.put("PE Mentors", "Physical Education Mentors — Student group for PE leadership and sports.");
-        descriptions.put("AHRMS", "Association of Hotel and Restaurant Management Students — Culinary and hospitality organization.");
-        descriptions.put("LIA", "LIA — Intellectual and academic literary circle.");
+        descriptions.put("CELTS", "Childhood Education and Language Teaching Students— Organization for future preschool and language educators.");
+        descriptions.put("AJPS", "Alliance of Junior Political Scientists — Student group for future political scientists, fostering knowledge and leadership skills.");
+        descriptions.put("JIECEP", "Junior Institute of Electronics Engineers of the Philippines — Student organization for aspiring electronics engineers, promoting skills and professional growth.");
+        descriptions.put("LIA", "Legion of Imaginative Artists — Intellectual and academic literary circle.");
         descriptions.put("SYFINEX", "SYFINEX — Financial literacy and investment organization.");
         descriptions.put("JPIA", "Junior Philippine Institute of Accountants — National accounting student organization.");
         descriptions.put("SVD Co-Missionary", "SVD Co-Missionary — Religious volunteer and mission assistance group.");
@@ -524,11 +576,12 @@ public class MemoryGame extends JFrame {
         boardPanel.setLayout(new GridLayout(rows, cols, 8, 8));
 
         for (String content : pairContents) {
-            CardButton b = new CardButton(content);
-            b.addActionListener(e -> onCardClicked(b));
-            cards.add(b);
-            boardPanel.add(b);
-        }
+        CardButton b = new CardButton(content); // will now display image if mapped
+        b.addActionListener(e -> onCardClicked(b));
+        cards.add(b);
+        boardPanel.add(b);
+}
+
 
         boardPanel.revalidate();
         boardPanel.repaint();
@@ -769,39 +822,57 @@ public class MemoryGame extends JFrame {
     }
 
     private class CardButton extends JButton {
-        private String content;
-        private boolean faceUp = false;
-        private boolean matched = false;
+    private String content;
+    private boolean faceUp = false;
+    private boolean matched = false;
+    private ImageIcon faceIcon;
 
-        public CardButton(String content) {
-            super(" ");
-            this.content = content;
-            setFont(getFont().deriveFont(Font.BOLD, 14f));
-            setFocusPainted(false);
-            setForeground(PRIMARY_TEXT);
-            setBorder(new LineBorder(new Color(0xBDBDBD)));
-            setBackground(BOARD_BG);
+    public CardButton(String content) {
+        super(" ");
+        this.content = content;
+        setFont(getFont().deriveFont(Font.BOLD, 14f));
+        setFocusPainted(false);
+        setForeground(PRIMARY_TEXT);
+        setBorder(new LineBorder(new Color(0xBDBDBD)));
+        setBackground(BOARD_BG);
+
+        // Load image from Google Drive
+        String url = cardImages.get(content);
+    if (url != null) {
+        try {
+            ImageIcon icon = new ImageIcon(new URL(url));
+            Image img = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+            faceIcon = new ImageIcon(img);
+        } catch (Exception ex) {
+            System.out.println("Failed to load image for " + content + ": " + ex.getMessage());
         }
+}
 
-        public String getContent() { return content; }
-        public boolean isFaceUp() { return faceUp; }
-        public boolean isMatched() { return matched; }
-
-        public void setMatched(boolean m) {
-            matched = m;
-            setEnabled(!m);
-        }
-
-        public void showFace() {
-            faceUp = true;
-            setText("<html><center>" + content + "</center></html>");
-        }
-
-        public void hideFace() {
-            faceUp = false;
-            setText(" ");
-        }
     }
+
+    public String getContent() { return content; }
+    public boolean isFaceUp() { return faceUp; }
+    public boolean isMatched() { return matched; }
+
+    public void setMatched(boolean m) {
+        matched = m;
+        setEnabled(!m);
+    }
+
+    public void showFace() {
+    faceUp = true;
+    if (faceIcon != null) setIcon(faceIcon);
+    else setText("<html><center>" + content + "</center></html>");
+}
+
+
+    public void hideFace() {
+        faceUp = false;
+        setIcon(null);
+        setText(" ");
+    }
+}
+
 
     private void saveScoreToLeaderboard() {
     try {
@@ -900,9 +971,23 @@ public class MemoryGame extends JFrame {
         data[i][7] = r[6];
     }
 
-    JTable table = new JTable(data, columnNames);
+    JTable table = new JTable(data, columnNames) {
+        @Override
+        public Component prepareRenderer(javax.swing.table.TableCellRenderer renderer, int row, int column) {
+            Component c = super.prepareRenderer(renderer, row, column);
+            if (!isRowSelected(row)) {
+                switch (row) {
+                    case 0: c.setBackground(new Color(255, 215, 0)); break; // Gold
+                    case 1: c.setBackground(new Color(192, 192, 192)); break; // Silver
+                    case 2: c.setBackground(new Color(205, 127, 50)); break; // Bronze
+                    default: c.setBackground(Color.WHITE); break;
+                }
+            }
+            return c;
+        }
+    };
+    
     table.setEnabled(false);
-
     table.setRowHeight(25);
     DefaultTableCellRenderer center = new DefaultTableCellRenderer();
     center.setHorizontalAlignment(SwingConstants.CENTER);
@@ -915,6 +1000,7 @@ public class MemoryGame extends JFrame {
 
     JOptionPane.showMessageDialog(this, scroll, "Leaderboard", JOptionPane.PLAIN_MESSAGE);
 }
+
 
 
     private static class LeaderboardEntry {
