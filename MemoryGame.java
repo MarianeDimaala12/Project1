@@ -907,38 +907,12 @@ public class MemoryGame extends JFrame {
 
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton closeBtn = new JButton("Close");
-        JButton exportBtn = new JButton("Export CSV");
         JButton clearBtn = new JButton("Clear Leaderboard");
-        bottom.add(exportBtn);
         bottom.add(clearBtn);
         bottom.add(closeBtn);
         dlg.add(bottom, BorderLayout.SOUTH);
 
         closeBtn.addActionListener(ev -> dlg.dispose());
-        exportBtn.addActionListener(ev -> {
-            try {
-                JFileChooser fc = new JFileChooser();
-                fc.setDialogTitle("Export leaderboard to CSV");
-                if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-                    File sel = fc.getSelectedFile();
-                    if (!sel.getName().toLowerCase().endsWith(".csv")) sel = new File(sel.getAbsolutePath() + ".csv");
-                    try (FileWriter fw = new FileWriter(sel)) {
-                        fw.write(String.join(",", columns) + System.lineSeparator());
-                        for (int r = 0; r < model.getRowCount(); r++) {
-                            Object rankObj = model.getValueAt(r, 0);
-                            Object playerObj = model.getValueAt(r, 1);
-                            Object scoreObj = model.getValueAt(r, 2);
-                            Object tsObj = model.getValueAt(r, 3);
-                            fw.write(String.format("%s,%s,%s,%s%n",
-                                    rankObj.toString(), playerObj.toString(), scoreObj.toString(), tsObj.toString()));
-                        }
-                    }
-                    JOptionPane.showMessageDialog(this, "Exported successfully.");
-                }
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Export failed: " + ex.getMessage());
-            }
-        });
         clearBtn.addActionListener(ev -> {
             int conf = JOptionPane.showConfirmDialog(dlg, "Clear entire leaderboard?", "Confirm", JOptionPane.YES_NO_OPTION);
             if (conf == JOptionPane.YES_OPTION) {
