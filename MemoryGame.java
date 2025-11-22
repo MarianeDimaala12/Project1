@@ -825,6 +825,7 @@ public class MemoryGame extends JFrame {
             return new ArrayList<>();
         }
     }
+    
 
     /**
      * New, improved leaderboard dialog with JTable, sortable columns, and automatic ranking.
