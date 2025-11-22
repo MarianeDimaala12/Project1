@@ -121,27 +121,26 @@ public class MemoryGame extends JFrame {
         JButton leaderboardBtn = new JButton("Leaderboard");
         JButton settingsBtn = new JButton("Settings");
         JButton exitBtn = new JButton("Exit Game");
-        JButton resetLeaderboardBtn = new JButton("Reset Leaderboard");
+        
 
         styleControlButton(resumeBtn);
         styleControlButton(newGameBtn);
         styleControlButton(leaderboardBtn);
         styleControlButton(settingsBtn);
         styleControlButton(exitBtn);
-        styleControlButton(resetLeaderboardBtn);
+      
 
         resumeBtn.addActionListener(e -> returnToGameScreen());
         newGameBtn.addActionListener(e -> restartLevel());
         leaderboardBtn.addActionListener(e -> showLeaderboardDialog());
         settingsBtn.addActionListener(e -> showSettingsDialog());
         exitBtn.addActionListener(e -> System.exit(0));
-        resetLeaderboardBtn.addActionListener(e -> resetLeaderboard());
+        
 
         mainMenuPanel.add(resumeBtn);
         mainMenuPanel.add(newGameBtn);
         mainMenuPanel.add(leaderboardBtn);
         mainMenuPanel.add(settingsBtn);
-        mainMenuPanel.add(resetLeaderboardBtn);
         mainMenuPanel.add(exitBtn);
     }
 
