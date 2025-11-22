@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -804,8 +805,7 @@ public class MemoryGame extends JFrame {
 
     private void saveScoreToLeaderboard() {
     try {
-        String date = LocalDateTime.now()
-                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a"));
+        String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
         int timeUsed = timeLimitSeconds > 0
                 ? (timeLimitSeconds - timeRemaining)
