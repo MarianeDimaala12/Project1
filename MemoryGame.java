@@ -68,6 +68,7 @@ public class MemoryGame extends JFrame {
     private JLabel infoLabel;
     private JLabel livesLabel;
     private JLabel scoreLabel;
+    private JLabel streakLabel;
     private JLabel timerLabel;
     private JButton restartButton;
     private javax.swing.Timer flipBackTimer;
@@ -459,6 +460,11 @@ private void createCardImages() {
         status.add(livesLabel);
         status.add(scoreLabel);
         status.add(timerLabel);
+        
+        streakLabel = new JLabel();
+        streakLabel.setForeground(HEADER_TEXT);
+        status.add(streakLabel);
+
 
         top.add(infoLabel, BorderLayout.WEST);
         top.add(status, BorderLayout.EAST);
@@ -555,6 +561,8 @@ private void createCardImages() {
         infoLabel.setText("Player: " + (playerName == null ? "?" : playerName) +
                 "  |  Level " + level + " — Pairs: " + pairs + "  Attempts: " + attempts +
                 "  Matches: " + matchesFound);
+        streakLabel.setText("Streak: " + consecutiveMatches);
+
     }
 
     private void setupCardsGrid(int pairs) {
@@ -618,8 +626,19 @@ private void createCardImages() {
 
                 int basePoints = 100;
                 int timeBonus = (timeLimitSeconds > 0) ? Math.max(0, timeRemaining) : 0;
-                int streakBonus = consecutiveMatches > 1 ? (consecutiveMatches - 1) * 50 : 0;
-                score += basePoints + timeBonus + streakBonus;
+                
+                if (consecutiveMatches > 1) {
+                showInfoDialog("Combo!", "Streak x" + consecutiveMatches + "! Bonus applied!");
+            }
+
+
+                // Combo multiplier: 1x, 1.2x, 1.5x, 2x, etc.
+                double comboMultiplier = 1 + (consecutiveMatches - 1) * 0.2;
+                if (comboMultiplier > 3.0) comboMultiplier = 3.0; // cap at 3x
+
+                int pointsThisMatch = (int)((basePoints + timeBonus) * comboMultiplier);
+                score += pointsThisMatch;
+
                 Toolkit.getDefaultToolkit().beep();
 
                 boolean timerWasRunning = false;
