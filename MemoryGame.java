@@ -281,12 +281,22 @@ public class MemoryGame extends JFrame {
         btnRow.setBackground(WINDOW_BG);
         JButton startBtn = new JButton("Start Adventure");
         nameField.addActionListener(e -> startBtn.doClick());
+
+        JButton leaderboardBtn = new JButton("View Leaderboard");
         JButton exitBtn = new JButton("Exit");
+
         styleControlButton(startBtn);
+        styleControlButton(leaderboardBtn);
         styleControlButton(exitBtn);
+
+        leaderboardBtn.addActionListener(e -> showLeaderboardDialog());
+
         btnRow.add(startBtn);
+        btnRow.add(leaderboardBtn);
         btnRow.add(exitBtn);
+
         bottom.add(btnRow, BorderLayout.SOUTH);
+
 
         root.add(bottom, BorderLayout.SOUTH);
 
@@ -666,10 +676,11 @@ public class MemoryGame extends JFrame {
 
         saveScoreToLeaderboard();
 
-        // show leaderboard automatically if setting enabled
+        // Show leaderboard automatically if option is enabled
         if (showLeaderboardAfterGame) {
             showLeaderboardDialog();
         }
+
 
         Object[] options = {"Play Again (Level 1)", "Exit"};
         int choice = JOptionPane.showOptionDialog(this, msg, "You Win!",
