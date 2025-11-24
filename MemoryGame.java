@@ -1,4 +1,3 @@
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -96,6 +95,7 @@ public class MemoryGame extends JFrame {
         getContentPane().setBackground(WINDOW_BG);
 
         createDescriptions();
+        createCardImages(); // Initialize card images map
         createTopPanel();
         createBoardPanel();
         createMainMenuPanel();
@@ -186,53 +186,76 @@ public class MemoryGame extends JFrame {
     
     private Map<String, String> cardImages = new HashMap<>();
 
-private void createCardImages() {
-        cardImages.put("SIT", "https://drive.google.com/file/d/12C34UeTLTawd-sHXfqae6pMfmr9z_vBy/view?usp=drive_link");
-        cardImages.put("JPCS", "https://drive.google.com/file/d/18_SFpsHkzdHO3JatRDLXP720WPJVQcP9/view?usp=drive_link");
-        cardImages.put("SOE", "https://drive.google.com/file/d/1GB27bkTqAwk_-P_dBbOpToyzy8CjpLZ5/view?usp=drive_link");
-        cardImages.put("SOA", "https://drive.google.com/file/d/1YO81BFl7rRRpybRByusQd9eMe-0HDMQj/view?usp=drive_link");
-        
-        cardImages.put("TDG", "https://drive.google.com/file/d/1LAvuSvOuuH3ZP6BBdvleXctl4AkX4861/view?usp=sharing");
-        cardImages.put("TAJ", "https://drive.google.com/file/d/1jJdlmt9StJ82WBpTO8Qb6DOUi_te8wxV/view?usp=sharing");
-        cardImages.put("GTS", "https://drive.google.com/file/d/1FSYJ5iuubUCLqCbAa1kWi0xX5g-9dg7O/view?usp=sharing");
-        cardImages.put("Halcons", "https://drive.google.com/file/d/171jgtLzTwPNCKqBIiYlyTY0za8Sz1jDR/view?usp=sharing");
-        cardImages.put("SBHTM", "https://drive.google.com/file/d/1jny3rfbZK3W-QHp4kTqjT-uPKWhwGntW/view?usp=sharing");
-        cardImages.put("SAFA", "https://drive.google.com/file/d/1wGZLe_QREplPHsMcWTa-1MmYstrFILz1/view?usp=sharing");
-        
-        cardImages.put("SE", "https://drive.google.com/file/d/1gTFSCoijoqqI-4x0N8SfrbGfWd9rgZGQ/view?usp=sharing");
-        cardImages.put("SAS", "https://drive.google.com/file/d/1P7HcMHRTUzYSMNjjtKDLr1zBPPOAqPkb/view?usp=sharing");
-        cardImages.put("SCJ", "https://drive.google.com/file/d/19FwFD0WlGmPM7NJd3ZvTUCN7_BxMte0u/view?usp=sharing");
-        cardImages.put("SC", "https://drive.google.com/file/d/1yHz587hPktqTqC_N1XahPEpsxHrDt8jk/view?usp=sharing");
-        cardImages.put("SEB", "https://drive.google.com/file/d/1EjHCX1lmurc2GC4_0R8lolXqjfmI2Oqy/view?usp=sharing");
-        cardImages.put("OBRA", "https://drive.google.com/file/d/1VyH4PIExUwahR7K5DdoX23T8DTSvvo8F/view?usp=sharing");
-        cardImages.put("DDC", "https://drive.google.com/file/d/1M5u7DdOzRgEIY20c-_hTeWrvPFZDGBgr/view?usp=sharing");
-        cardImages.put("Musika Divinista", "https://drive.google.com/file/d/1UpL1mbF00YXY1VQld-91e11x0I6Kvrsa/view?usp=sharing");
-        
-        cardImages.put("Ms. DWCC Organization", "https://drive.google.com/file/d/1-mSpQKz_9SohhWfqNFKRHz191Tns-msq/view?usp=sharing");
-        cardImages.put("SAO", "https://drive.google.com/file/d/1VenUfytZ63XRvbG_O16TmFFxDtfLxjf7/view?usp=sharing");
-        cardImages.put("SAYM", "https://drive.google.com/file/d/1kQKP8UDecJkLMZeipqH_OHwFcaykSIK6/view?usp=sharing");
-        cardImages.put("Phoenix Debate Club", "https://drive.google.com/file/d/1bEv23kno8Nwjw65tryvMFlyxGeFMBhRS/view?usp=sharing");
-        cardImages.put("DivinisTanghalan", "https://drive.google.com/file/d/1ofwnt0VErxZB5by6eQSsYgq45mm9DCxl/view?usp=sharing");
-        cardImages.put("DWCC Saver-G", "https://drive.google.com/file/d/12AU3kQ__vuUQ_LGx3GWAQ03dLYBnozKy/view?usp=sharing");
-        cardImages.put("Peer Facilitators' Club", "https://drive.google.com/file/d/1WviXP53jSVkKeXozRLtfz-UicbTUIhfR/view?usp=sharing");
-        cardImages.put("Mangyan Student Organization", "https://drive.google.com/file/d/1MH6MZ_N7Q1QcyuE0VGggCrKmiBxZ6UdM/view?usp=sharing");
-        cardImages.put("DWCC Rotaract Club of Calapan", "https://drive.google.com/file/d/1ZNZCryfxmCnQyneceb89_p56bSBGR_La/view?usp=sharing");
-        cardImages.put("UAPSA", "https://drive.google.com/file/d/1kGv6uWMiOf3DGF20pQdva4IW6z4nXwe-/view?usp=sharing");
-        
-        cardImages.put("PICE", "https://drive.google.com/file/d/1T5Tq41TAq8X0IWLQlyCiFh7zqL4JmuSG/view?usp=sharing"); 
-        cardImages.put("Association of Student Grantees", "https://drive.google.com/file/d/1RdYCDdWY1l3G-3qoIQq_U7yUiqOvVlhP/view?usp=sharing");
-        cardImages.put("ATEMS", "https://drive.google.com/file/d/1J9VAHyz8FZSGVe5Hz4CNAzzmksG1oT1k/view?usp=sharing");
-        cardImages.put("AJE", "https://drive.google.com/file/d/12C34UeTLTawd-sHXfqae6pMfmr9z_vBy/view?usp=sharing");
-        cardImages.put("AMMS", "https://drive.google.com/file/d/1d_ValNb2CtLool9eAKdNjSZtS6SNPVqM/view?usp=sharing");
-        cardImages.put("CELTS", "https://drive.google.com/file/d/1_taJW5xaMgGQTGJ7q22NB5HgkuN5S5Ce/view?usp=sharing");
-        cardImages.put("AJPS", "https://drive.google.com/file/d/1UvpRTmTUqrnbHMJ-VLzV6One2j0E_M6M/view?usp=sharing");
-        cardImages.put("JIECEP", "https://drive.google.com/file/d/1XllnhA_VM3AnF_bT600Fu0KAK0AYVXTu/view?usp=sharing");
-        cardImages.put("LIA", "https://drive.google.com/file/d/1758bB-gzrBrPiwjE76fCYRVUw47hpakt/view?usp=sharing");
-        cardImages.put("SYFINEX", "https://drive.google.com/file/d/1kX6pCng0zT7FGBUgwzFTP-Likif0L02g/view?usp=sharing");
-        cardImages.put("JPIA", "https://drive.google.com/file/d/1-hL1cKDOklAqa8el7AaEbBxw6QyCVBCv/view?usp=sharing");
-        cardImages.put("SVD Co-Missionary", "https://drive.google.com/file/d/1n09R2pDyNvQCDZVS6ydxakOgdSPG3_U4/view?usp=sharing");
+    /**
+     * Converts a Google Drive sharing link (e.g., .../view?usp=sharing)
+     * to a direct-download link (e.g., .../export?format=jpg&id=...)
+     * that can be used by ImageIcon to load the image content.
+     */
+    private String convertDriveLinkToDirect(String sharingUrl) {
+        if (sharingUrl == null) return null;
 
-        // Add the rest similarly...
+        // Check for the standard sharing ID format (d/.../view or file/d/...)
+        int startIndex = sharingUrl.indexOf("/d/");
+        if (startIndex != -1) {
+            int endIndex = sharingUrl.indexOf("/view", startIndex);
+            if (endIndex != -1) {
+                // Extracts the file ID
+                String fileId = sharingUrl.substring(startIndex + 3, endIndex);
+                // Return the direct export link
+                return "https://drive.google.com/uc?export=download&id=" + fileId;
+            }
+        }
+        // Fallback in case of unexpected URL format
+        return sharingUrl;
+    }
+
+
+private void createCardImages() {
+        // FIX APPLIED: Wrapping all links with convertDriveLinkToDirect()
+        cardImages.put("SIT", convertDriveLinkToDirect("https://drive.google.com/file/d/12C34UeTLTawd-sHXfqae6pMfmr9z_vBy/view?usp=drive_link"));
+        cardImages.put("JPCS", convertDriveLinkToDirect("https://drive.google.com/file/d/18_SFpsHkzdHO3JatRDLXP720WPJVQcP9/view?usp=drive_link"));
+        cardImages.put("SOE", convertDriveLinkToDirect("https://drive.google.com/file/d/1GB27bkTqAwk_-P_dBbOpToyzy8CjpLZ5/view?usp=drive_link"));
+        cardImages.put("SOA", convertDriveLinkToDirect("https://drive.google.com/file/d/1YO81BFl7rRRpybRByusQd9eMe-0HDMQj/view?usp=drive_link"));
+        
+        cardImages.put("TDG", convertDriveLinkToDirect("https://drive.google.com/file/d/1LAvuSvOuuH3ZP6BBdvleXctl4AkX4861/view?usp=sharing"));
+        cardImages.put("TAJ", convertDriveLinkToDirect("https://drive.google.com/file/d/1jJdlmt9StJ82WBpTO8Qb6DOUi_te8wxV/view?usp=sharing"));
+        cardImages.put("GTS", convertDriveLinkToDirect("https://drive.google.com/file/d/1FSYJ5iuubUCLqCbAa1kWi0xX5g-9dg7O/view?usp=sharing"));
+        cardImages.put("Halcons", convertDriveLinkToDirect("https://drive.google.com/file/d/171jgtLzTwPNCKqBIiYlyTY0za8Sz1jDR/view?usp=sharing"));
+        cardImages.put("SBHTM", convertDriveLinkToDirect("https://drive.google.com/file/d/1jny3rfbZK3W-QHp4kTqjT-uPKWhwGntW/view?usp=sharing"));
+        cardImages.put("SAFA", convertDriveLinkToDirect("https://drive.google.com/file/d/1wGZLe_QREplPHsMcWTa-1MmYstrFILz1/view?usp=sharing"));
+        
+        cardImages.put("SE", convertDriveLinkToDirect("https://drive.google.com/file/d/1gTFSCoijoqqI-4x0N8SfrbGfWd9rgZGQ/view?usp=sharing"));
+        cardImages.put("SAS", convertDriveLinkToDirect("https://drive.google.com/file/d/1P7HcMHRTUzYSMNjjtKDLr1zBPPOAqPkb/view?usp=sharing"));
+        cardImages.put("SCJ", convertDriveLinkToDirect("https://drive.google.com/file/d/19FwFD0WlGmPM7NJd3ZvTUCN7_BxMte0u/view?usp=sharing"));
+        cardImages.put("SC", convertDriveLinkToDirect("https://drive.google.com/file/d/1yHz587hPktqTqC_N1XahPEpsxHrDt8jk/view?usp=sharing"));
+        cardImages.put("SEB", convertDriveLinkToDirect("https://drive.google.com/file/d/1EjHCX1lmurc2GC4_0R8lolXqjfmI2Oqy/view?usp=sharing"));
+        cardImages.put("OBRA", convertDriveLinkToDirect("https://drive.google.com/file/d/1VyH4PIExUwahR7K5DdoX23T8DTSvvo8F/view?usp=sharing"));
+        cardImages.put("DDC", convertDriveLinkToDirect("https://drive.google.com/file/d/1M5u7DdOzRgEIY20c-_hTeWrvPFZDGBgr/view?usp=sharing"));
+        cardImages.put("Musika Divinista", convertDriveLinkToDirect("https://drive.google.com/file/d/1UpL1mbF00YXY1VQld-91e11x0I6Kvrsa/view?usp=sharing"));
+        
+        cardImages.put("Miss DWCC Organization", convertDriveLinkToDirect("https://drive.google.com/file/d/1-mSpQKz_9SohhWfqNFKRHz191Tns-msq/view?usp=sharing"));
+        cardImages.put("SAO", convertDriveLinkToDirect("https://drive.google.com/file/d/1VenUfytZ63XRvbG_O16TmFFxDtfLxjf7/view?usp=sharing"));
+        cardImages.put("SAYM", convertDriveLinkToDirect("https://drive.google.com/file/d/1kQKP8UDecJkLMZeipqH_OHwFcaykSIK6/view?usp=sharing"));
+        cardImages.put("Phoenix Debate Council", convertDriveLinkToDirect("https://drive.google.com/file/d/1bEv23kno8Nwjw65tryvMFlyxGeFMBhRS/view?usp=sharing"));
+        cardImages.put("DivinisTanghalan", convertDriveLinkToDirect("https://drive.google.com/file/d/1ofwnt0VErxZB5by6eQSsYgq45mm9DCxl/view?usp=sharing"));
+        cardImages.put("DWCC Saver-G", convertDriveLinkToDirect("https://drive.google.com/file/d/12AU3kQ__vuUQ_LGx3GWAQ03dLYBnozKy/view?usp=sharing"));
+        cardImages.put("Peer Facilitators' Club", convertDriveLinkToDirect("https://drive.google.com/file/d/1WviXP53jSVkKeXozRLtfz-UicbTUIhfR/view?usp=sharing"));
+        cardImages.put("Mangyan Student Organization", convertDriveLinkToDirect("https://drive.google.com/file/d/1MH6MZ_N7Q1QcyuE0VGggCrKmiBxZ6UdM/view?usp=sharing"));
+        cardImages.put("DWCC Rotaract Club of Calapan", convertDriveLinkToDirect("https://drive.google.com/file/d/1ZNZCryfxmCnQyneceb89_p56bSBGR_La/view?usp=sharing"));
+        cardImages.put("UAPSA", convertDriveLinkToDirect("https://drive.google.com/file/d/1kGv6uWMiOf3DGF20pQdva4IW6z4nXwe-/view?usp=sharing"));
+        
+        cardImages.put("PICE", convertDriveLinkToDirect("https://drive.google.com/file/d/1T5Tq41TAq8X0IWLQlyCiFh7zqL4JmuSG/view?usp=sharing")); 
+        cardImages.put("Association of Student Grantees", convertDriveLinkToDirect("https://drive.google.com/file/d/1RdYCDdWY1l3G-3qoIQq_U7yUiqOvVlhP/view?usp=sharing"));
+        cardImages.put("ATEMS", convertDriveLinkToDirect("https://drive.google.com/file/d/1J9VAHyz8FZSGVe5Hz4CNAzzmksG1oT1k/view?usp=sharing"));
+        cardImages.put("AJE", convertDriveLinkToDirect("https://drive.google.com/file/d/12C34UeTLTawd-sHXfqae6pMfmr9z_vBy/view?usp=sharing"));
+        cardImages.put("AMMS", convertDriveLinkToDirect("https://drive.google.com/file/d/1d_ValNb2CtLool9eAKdNjSZtS6SNPVqM/view?usp=sharing"));
+        cardImages.put("CELTS", convertDriveLinkToDirect("https://drive.google.com/file/d/1_taJW5xaMgGQTGJ7q22NB5HgkuN5S5Ce/view?usp=sharing"));
+        cardImages.put("AJPS", convertDriveLinkToDirect("https://drive.google.com/file/d/1UvpRTmTUqrnbHMJ-VLzV6One2j0E_M6M/view?usp=sharing"));
+        cardImages.put("JIECEP", convertDriveLinkToDirect("https://drive.google.com/file/d/1XllnhA_VM3AnF_bT600Fu0KAK0AYVXTu/view?usp=sharing"));
+        cardImages.put("LIA", convertDriveLinkToDirect("https://drive.google.com/file/d/1758bB-gzrBrPiwjE76fCYRVUw47hpakt/view?usp=sharing"));
+        cardImages.put("SYFINEX", convertDriveLinkToDirect("https://drive.google.com/file/d/1kX6pCng0zT7FGBUgwzFTP-Likif0L02g/view?usp=sharing"));
+        cardImages.put("JPIA", convertDriveLinkToDirect("https://drive.google.com/file/d/1-hL1cKDOklAqa8el7AaEbBxw6QyCVBCv/view?usp=sharing"));
+        cardImages.put("SVD Co-Missionary", convertDriveLinkToDirect("https://drive.google.com/file/d/1n09R2pDyNvQCDZVS6ydxakOgdSPG3_U4/view?usp=sharing"));
     }
 
 
@@ -857,16 +880,17 @@ private void createCardImages() {
 
         // Load image from Google Drive
         String url = cardImages.get(content);
-    if (url != null) {
-        try {
-            ImageIcon icon = new ImageIcon(new URL(url));
-            Image img = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-            faceIcon = new ImageIcon(img);
-        } catch (Exception ex) {
-            System.out.println("Failed to load image for " + content + ": " + ex.getMessage());
+        if (url != null) {
+            try {
+                // The URL here is now the direct download link
+                ImageIcon icon = new ImageIcon(new URL(url));
+                Image img = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+                faceIcon = new ImageIcon(img);
+            } catch (Exception ex) {
+                // This will happen if the URL is invalid or the Google Drive file is not shared publicly
+                System.out.println("Failed to load image for " + content + ". Check sharing permissions.: " + ex.getMessage());
+            }
         }
-}
-
     }
 
     public String getContent() { return content; }
@@ -879,10 +903,17 @@ private void createCardImages() {
     }
 
     public void showFace() {
-    faceUp = true;
-    if (faceIcon != null) setIcon(faceIcon);
-    else setText("<html><center>" + content + "</center></html>");
-}
+        faceUp = true;
+        // Use icon if available, otherwise fallback to text
+        if (faceIcon != null) {
+            setIcon(faceIcon);
+            setText(null); // Clear text when icon is set
+        }
+        else {
+             setIcon(null);
+             setText("<html><center>" + content + "</center></html>");
+        }
+    }
 
 
     public void hideFace() {
