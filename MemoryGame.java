@@ -33,9 +33,9 @@ public class MemoryGame extends JFrame {
             {"SE", "SAS", "SCJ", "SC", "SEB", "OBRA", "DDC", "Musika Divinista"},
             {"Miss DWCC Organization", "SAO", "SAYM", "Phoenix Debate Council", "DivinisTanghalan",
                     "DWCC Saver-G", "Peer Facilitators' Club", "Mangyan Student Organization",
-                    "DWCC Rotaract Club of Calapan", "Missionary Families of Christ"},
-            {"DWCC Brass Band", "Association of Student Grantees", "ATEMS", "AJE", "AMMS", "CELT",
-                    "PE Mentors", "AHRMS", "LIA", "SYFINEX", "JPIA", "SVD Co-Missionary"}
+                    "DWCC Rotaract Club of Calapan", "UAPSA"},
+            {"PICE", "Association of Student Grantees", "ATEMS", "AJE", "AMMS", "CELTS",
+                    "AJPS", "JIECEP", "LIA", "SYFINEX", "JPIA", "SVD Co-Missionary"}
     };
 
     private static final int[] PAIRS_BY_LEVEL = {4, 6, 8, 10, 12};
@@ -211,52 +211,55 @@ public class MemoryGame extends JFrame {
 
 
 private void createCardImages() {
-        // FIX APPLIED: Wrapping all links with convertDriveLinkToDirect()
-        cardImages.put("SIT", convertDriveLinkToDirect("https://drive.google.com/file/d/12C34UeTLTawd-sHXfqae6pMfmr9z_vBy/view?usp=drive_link"));
-        cardImages.put("JPCS", convertDriveLinkToDirect("https://drive.google.com/file/d/18_SFpsHkzdHO3JatRDLXP720WPJVQcP9/view?usp=drive_link"));
-        cardImages.put("SOE", convertDriveLinkToDirect("https://drive.google.com/file/d/1GB27bkTqAwk_-P_dBbOpToyzy8CjpLZ5/view?usp=drive_link"));
-        cardImages.put("SOA", convertDriveLinkToDirect("https://drive.google.com/file/d/1YO81BFl7rRRpybRByusQd9eMe-0HDMQj/view?usp=drive_link"));
-        
-        cardImages.put("TDG", convertDriveLinkToDirect("https://drive.google.com/file/d/1LAvuSvOuuH3ZP6BBdvleXctl4AkX4861/view?usp=sharing"));
-        cardImages.put("TAJ", convertDriveLinkToDirect("https://drive.google.com/file/d/1jJdlmt9StJ82WBpTO8Qb6DOUi_te8wxV/view?usp=sharing"));
-        cardImages.put("GTS", convertDriveLinkToDirect("https://drive.google.com/file/d/1FSYJ5iuubUCLqCbAa1kWi0xX5g-9dg7O/view?usp=sharing"));
-        cardImages.put("Halcons", convertDriveLinkToDirect("https://drive.google.com/file/d/171jgtLzTwPNCKqBIiYlyTY0za8Sz1jDR/view?usp=sharing"));
-        cardImages.put("SBHTM", convertDriveLinkToDirect("https://drive.google.com/file/d/1jny3rfbZK3W-QHp4kTqjT-uPKWhwGntW/view?usp=sharing"));
-        cardImages.put("SAFA", convertDriveLinkToDirect("https://drive.google.com/file/d/1wGZLe_QREplPHsMcWTa-1MmYstrFILz1/view?usp=sharing"));
-        
-        cardImages.put("SE", convertDriveLinkToDirect("https://drive.google.com/file/d/1gTFSCoijoqqI-4x0N8SfrbGfWd9rgZGQ/view?usp=sharing"));
-        cardImages.put("SAS", convertDriveLinkToDirect("https://drive.google.com/file/d/1P7HcMHRTUzYSMNjjtKDLr1zBPPOAqPkb/view?usp=sharing"));
-        cardImages.put("SCJ", convertDriveLinkToDirect("https://drive.google.com/file/d/19FwFD0WlGmPM7NJd3ZvTUCN7_BxMte0u/view?usp=sharing"));
-        cardImages.put("SC", convertDriveLinkToDirect("https://drive.google.com/file/d/1yHz587hPktqTqC_N1XahPEpsxHrDt8jk/view?usp=sharing"));
-        cardImages.put("SEB", convertDriveLinkToDirect("https://drive.google.com/file/d/1EjHCX1lmurc2GC4_0R8lolXqjfmI2Oqy/view?usp=sharing"));
-        cardImages.put("OBRA", convertDriveLinkToDirect("https://drive.google.com/file/d/1VyH4PIExUwahR7K5DdoX23T8DTSvvo8F/view?usp=sharing"));
-        cardImages.put("DDC", convertDriveLinkToDirect("https://drive.google.com/file/d/1M5u7DdOzRgEIY20c-_hTeWrvPFZDGBgr/view?usp=sharing"));
-        cardImages.put("Musika Divinista", convertDriveLinkToDirect("https://drive.google.com/file/d/1UpL1mbF00YXY1VQld-91e11x0I6Kvrsa/view?usp=sharing"));
-        
-        cardImages.put("Miss DWCC Organization", convertDriveLinkToDirect("https://drive.google.com/file/d/1-mSpQKz_9SohhWfqNFKRHz191Tns-msq/view?usp=sharing"));
-        cardImages.put("SAO", convertDriveLinkToDirect("https://drive.google.com/file/d/1VenUfytZ63XRvbG_O16TmFFxDtfLxjf7/view?usp=sharing"));
-        cardImages.put("SAYM", convertDriveLinkToDirect("https://drive.google.com/file/d/1kQKP8UDecJkLMZeipqH_OHwFcaykSIK6/view?usp=sharing"));
-        cardImages.put("Phoenix Debate Council", convertDriveLinkToDirect("https://drive.google.com/file/d/1bEv23kno8Nwjw65tryvMFlyxGeFMBhRS/view?usp=sharing"));
-        cardImages.put("DivinisTanghalan", convertDriveLinkToDirect("https://drive.google.com/file/d/1ofwnt0VErxZB5by6eQSsYgq45mm9DCxl/view?usp=sharing"));
-        cardImages.put("DWCC Saver-G", convertDriveLinkToDirect("https://drive.google.com/file/d/12AU3kQ__vuUQ_LGx3GWAQ03dLYBnozKy/view?usp=sharing"));
-        cardImages.put("Peer Facilitators' Club", convertDriveLinkToDirect("https://drive.google.com/file/d/1WviXP53jSVkKeXozRLtfz-UicbTUIhfR/view?usp=sharing"));
-        cardImages.put("Mangyan Student Organization", convertDriveLinkToDirect("https://drive.google.com/file/d/1MH6MZ_N7Q1QcyuE0VGggCrKmiBxZ6UdM/view?usp=sharing"));
-        cardImages.put("DWCC Rotaract Club of Calapan", convertDriveLinkToDirect("https://drive.google.com/file/d/1ZNZCryfxmCnQyneceb89_p56bSBGR_La/view?usp=sharing"));
-        cardImages.put("UAPSA", convertDriveLinkToDirect("https://drive.google.com/file/d/1kGv6uWMiOf3DGF20pQdva4IW6z4nXwe-/view?usp=sharing"));
-        
-        cardImages.put("PICE", convertDriveLinkToDirect("https://drive.google.com/file/d/1T5Tq41TAq8X0IWLQlyCiFh7zqL4JmuSG/view?usp=sharing")); 
-        cardImages.put("Association of Student Grantees", convertDriveLinkToDirect("https://drive.google.com/file/d/1RdYCDdWY1l3G-3qoIQq_U7yUiqOvVlhP/view?usp=sharing"));
-        cardImages.put("ATEMS", convertDriveLinkToDirect("https://drive.google.com/file/d/1J9VAHyz8FZSGVe5Hz4CNAzzmksG1oT1k/view?usp=sharing"));
-        cardImages.put("AJE", convertDriveLinkToDirect("https://drive.google.com/file/d/12C34UeTLTawd-sHXfqae6pMfmr9z_vBy/view?usp=sharing"));
-        cardImages.put("AMMS", convertDriveLinkToDirect("https://drive.google.com/file/d/1d_ValNb2CtLool9eAKdNjSZtS6SNPVqM/view?usp=sharing"));
-        cardImages.put("CELTS", convertDriveLinkToDirect("https://drive.google.com/file/d/1_taJW5xaMgGQTGJ7q22NB5HgkuN5S5Ce/view?usp=sharing"));
-        cardImages.put("AJPS", convertDriveLinkToDirect("https://drive.google.com/file/d/1UvpRTmTUqrnbHMJ-VLzV6One2j0E_M6M/view?usp=sharing"));
-        cardImages.put("JIECEP", convertDriveLinkToDirect("https://drive.google.com/file/d/1XllnhA_VM3AnF_bT600Fu0KAK0AYVXTu/view?usp=sharing"));
-        cardImages.put("LIA", convertDriveLinkToDirect("https://drive.google.com/file/d/1758bB-gzrBrPiwjE76fCYRVUw47hpakt/view?usp=sharing"));
-        cardImages.put("SYFINEX", convertDriveLinkToDirect("https://drive.google.com/file/d/1kX6pCng0zT7FGBUgwzFTP-Likif0L02g/view?usp=sharing"));
-        cardImages.put("JPIA", convertDriveLinkToDirect("https://drive.google.com/file/d/1-hL1cKDOklAqa8el7AaEbBxw6QyCVBCv/view?usp=sharing"));
-        cardImages.put("SVD Co-Missionary", convertDriveLinkToDirect("https://drive.google.com/file/d/1n09R2pDyNvQCDZVS6ydxakOgdSPG3_U4/view?usp=sharing"));
-    }
+    String basePath = "C:\\Users\\acer\\OneDrive\\Documents\\Memory Game\\images";
+  // folder where your images are stored
+
+    cardImages.put("SIT", basePath + "\\SIT.jpg");
+    cardImages.put("JPCS", basePath + "\\JPCS.jpg");
+    cardImages.put("SOE", basePath + "\\SOE.jpg");
+    cardImages.put("SOA", basePath + "\\SOA.jpg");
+
+    cardImages.put("TDG", basePath + "\\TDG.jpg");
+    cardImages.put("TAJ", basePath + "\\TAJ.jpg");
+    cardImages.put("GTS", basePath + "\\GTS.jpg");
+    cardImages.put("Halcons", basePath + "\\Halcons.jpg");
+    cardImages.put("SBHTM", basePath + "\\SBHTM.jpg");
+    cardImages.put("SAFA", basePath + "\\SAFA.jpg");
+
+    cardImages.put("SE", basePath + "\\SE.jpg");
+    cardImages.put("SAS", basePath + "\\SAS.jpg");
+    cardImages.put("SCJ", basePath + "\\SCJ.jpg");
+    cardImages.put("SC", basePath + "\\SC.jpg");
+    cardImages.put("SEB", basePath + "\\SEB.jpg");
+    cardImages.put("OBRA", basePath + "\\OBRA.jpg");
+    cardImages.put("DDC", basePath + "\\DDC.jpg");
+    cardImages.put("Musika Divinista", basePath + "\\Musika Divinista.jpg");
+
+    cardImages.put("Miss DWCC Organization", basePath + "\\Miss DWCC Organization.jpg");
+    cardImages.put("SAO", basePath + "\\SAO.jpg");
+    cardImages.put("SAYM", basePath + "\\SAYM.jpg");
+    cardImages.put("Phoenix Debate Council", basePath + "\\Phoenix Debate Council.jpg");
+    cardImages.put("DivinisTanghalan", basePath + "\\DivinisTanghalan.jpg");
+    cardImages.put("DWCC Saver-G", basePath + "\\DWCC Saver-G.jpg");
+    cardImages.put("Peer Facilitators' Club", basePath + "\\Peer Facilitators' Club.jpg");
+    cardImages.put("Mangyan Student Organization", basePath + "\\Mangyan Student Organization.jpg");
+    cardImages.put("DWCC Rotaract Club of Calapan", basePath + "\\DWCC Rotaract Club of Calapan.jpg");
+    cardImages.put("UAPSA", basePath + "\\UAPSA.jpg");
+
+    cardImages.put("PICE", basePath + "\\PICE.jpg");
+    cardImages.put("Association of Student Grantees", basePath + "\\Association of Student Grantees.jpg");
+    cardImages.put("ATEMS", basePath + "\\ATEMS.jpg");
+    cardImages.put("AJE", basePath + "\\AJE.jpg");
+    cardImages.put("AMMS", basePath + "\\AMMS.jpg");
+    cardImages.put("CELTS", basePath + "\\CELTS.jpg");
+    cardImages.put("AJPS", basePath + "\\AJPS.jpg");
+    cardImages.put("JIECEP", basePath + "\\JIECEP.jpg");
+    cardImages.put("LIA", basePath + "\\LIA.jpg");
+    cardImages.put("SYFINEX", basePath + "\\SYFINEX.jpg");
+    cardImages.put("JPIA", basePath + "\\JPIA.jpg");
+    cardImages.put("SVD Co-Missionary", basePath + "\\SVD Co-Missionary.jpg");
+}
+
 
 
     private void createDescriptions() {
@@ -651,8 +654,8 @@ private void createCardImages() {
                 int timeBonus = (timeLimitSeconds > 0) ? Math.max(0, timeRemaining) : 0;
                 
                 if (consecutiveMatches > 1) {
-                showInfoDialog("Combo!", "Streak x" + consecutiveMatches + "! Bonus applied!");
-            }
+        showTemporaryMessage("🔥 Combo! Streak x" + consecutiveMatches + "!", 2000 ); // 1.5 sec
+    }
 
 
                 // Combo multiplier: 1x, 1.2x, 1.5x, 2x, etc.
@@ -713,7 +716,10 @@ private void createCardImages() {
     }
 
     private void onLevelComplete() {
-        if (countdownTimer != null) countdownTimer.stop();
+    if (countdownTimer != null) countdownTimer.stop();
+
+    if (level < PAIRS_BY_LEVEL.length) {
+        // For levels 1–4, go to next level
         int option = JOptionPane.showConfirmDialog(this,
                 "Level " + level + " complete!\nScore: " + score + "\nProceed to next level?",
                 "Level Complete",
@@ -734,7 +740,37 @@ private void createCardImages() {
                 if (conf == JOptionPane.YES_OPTION) System.exit(0);
             }
         }
+    } else {
+        // Level 5 completed — final level
+        saveScoreToLeaderboard();
+        String[] options = {"View Leaderboard", "Start New Game", "Exit"};
+        int choice = JOptionPane.showOptionDialog(this,
+                "🎉 Congratulations, " + playerName + "! 🎉\nYou finished the final Level 5!\nFinal Score: " + score,
+                "You Completed the Game!",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+        switch (choice) {
+            case 0 -> showLeaderboardDialog(); // View leaderboard
+            case 1 -> {
+                playerName = null;
+                boolean ok = showWelcomeScreenAndGetName();
+                if (ok) {
+                    level = 1;
+                    score = 0;
+                    startLevel();
+                } else {
+                    System.exit(0);
+                }
+            }
+            default -> System.exit(0); // Exit
+        }
     }
+}
+
 
     private void onGameEndLose() {
         if (countdownTimer != null) countdownTimer.stop();
@@ -862,6 +898,28 @@ private void createCardImages() {
 
         dialog.setVisible(true);
     }
+    
+    private void showTemporaryMessage(String message, int durationMillis) {
+    final JWindow popup = new JWindow(this);
+    JLabel label = new JLabel(message, SwingConstants.CENTER);
+    label.setOpaque(true);
+    label.setBackground(new Color(255, 255, 225));
+    label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+    label.setFont(label.getFont().deriveFont(Font.BOLD, 16f));
+    popup.add(label);
+    popup.pack();
+
+    // center over game window
+    Point loc = getLocationOnScreen();
+    int x = loc.x + (getWidth() - popup.getWidth()) / 2;
+    int y = loc.y + (getHeight() - popup.getHeight()) / 2;
+    popup.setLocation(x, y);
+    popup.setVisible(true);
+
+    // hide after duration
+    new Timer(durationMillis, e -> popup.dispose()).start();
+}
+
 
     private class CardButton extends JButton {
     private String content;
@@ -879,18 +937,18 @@ private void createCardImages() {
         setBackground(BOARD_BG);
 
         // Load image from Google Drive
-        String url = cardImages.get(content);
-        if (url != null) {
-            try {
-                // The URL here is now the direct download link
-                ImageIcon icon = new ImageIcon(new URL(url));
+        String path = cardImages.get(content);
+        if (path != null) {
+            File file = new File(path);
+            if (file.exists()) {
+                ImageIcon icon = new ImageIcon(path);
                 Image img = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
                 faceIcon = new ImageIcon(img);
-            } catch (Exception ex) {
-                // This will happen if the URL is invalid or the Google Drive file is not shared publicly
-                System.out.println("Failed to load image for " + content + ". Check sharing permissions.: " + ex.getMessage());
+            } else {
+                System.out.println("Image file not found: " + path);
             }
-        }
+}
+
     }
 
     public String getContent() { return content; }
@@ -1008,7 +1066,6 @@ private void createCardImages() {
 
     Object[][] data = new Object[rows.size()][8];
     int rank = 1;
-
     for (int i = 0; i < rows.size(); i++) {
         String[] r = rows.get(i);
         data[i][0] = rank++;
@@ -1048,8 +1105,35 @@ private void createCardImages() {
     JScrollPane scroll = new JScrollPane(table);
     scroll.setPreferredSize(new Dimension(800, 300));
 
-    JOptionPane.showMessageDialog(this, scroll, "Leaderboard", JOptionPane.PLAIN_MESSAGE);
+    String[] options = {"Reset Leaderboard", "Start New Game", "Exit"};
+    int choice = JOptionPane.showOptionDialog(
+            this,
+            scroll,
+            "Leaderboard",
+            JOptionPane.DEFAULT_OPTION,
+            JOptionPane.PLAIN_MESSAGE,
+            null,
+            options,
+            options[0]
+    );
+
+    switch (choice) {
+        case 0 -> resetLeaderboard(); // Reset leaderboard
+        case 1 -> {
+            playerName = null;
+            boolean ok = showWelcomeScreenAndGetName();
+            if (ok) {
+                level = 1;
+                score = 0;
+                startLevel();
+            } else {
+                System.exit(0);
+            }
+        }
+        default -> System.exit(0); // Exit
+    }
 }
+
 
 
 
