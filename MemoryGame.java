@@ -85,6 +85,8 @@ public class MemoryGame extends JFrame {
     // Settings file
     private static final String SETTINGS_FILE = "settings.properties";
     private boolean showLeaderboardAfterGame = false;
+    private boolean memoryTrainingMode = false; // NEW
+
 
     public MemoryGame() {
         super("DWCC Memory Game");
@@ -567,18 +569,26 @@ private void createCardImages() {
     }
 
     private void startLevel() {
-        pairs = PAIRS_BY_LEVEL[level - 1];
-        lives = LIVES_BY_LEVEL[level - 1];
-        timeLimitSeconds = TIME_LIMIT_BY_LEVEL_SECONDS[level - 1];
-        matchesFound = 0;
-        attempts = 0;
-        consecutiveMatches = 0;
-        timeRemaining = timeLimitSeconds;
-        updateInfoLabels();
+    pairs = PAIRS_BY_LEVEL[level - 1];
+    lives = LIVES_BY_LEVEL[level - 1];
+    timeLimitSeconds = TIME_LIMIT_BY_LEVEL_SECONDS[level - 1];
 
-        setupCardsGrid(pairs);
-        startCountdownIfNeeded();
+    // MEMORY TRAINING MODE OVERRIDES
+    if (memoryTrainingMode) {
+        lives = Integer.MAX_VALUE;      // unlimited lives
+        timeLimitSeconds = 0;           // no countdown timer
     }
+
+    matchesFound = 0;
+    attempts = 0;
+    consecutiveMatches = 0;
+    timeRemaining = timeLimitSeconds;
+    updateInfoLabels();
+
+    setupCardsGrid(pairs);
+    startCountdownIfNeeded();
+}
+
 
     private void updateInfoLabels() {
         livesLabel.setText("Lives: " + lives);
@@ -855,25 +865,26 @@ private void createCardImages() {
     }
 
     private void startCountdownIfNeeded() {
-        if (countdownTimer != null) countdownTimer.stop();
-        if (timeLimitSeconds > 0) {
-            timeRemaining = timeLimitSeconds;
+    if (countdownTimer != null) countdownTimer.stop();
+    if (timeLimitSeconds > 0) {
+        timeRemaining = timeLimitSeconds;
+        timerLabel.setText("Time: " + formatTime(timeRemaining));
+        countdownTimer = new javax.swing.Timer(1000, e -> {
+            timeRemaining--;
             timerLabel.setText("Time: " + formatTime(timeRemaining));
-            countdownTimer = new javax.swing.Timer(1000, e -> {
-                timeRemaining--;
-                timerLabel.setText("Time: " + formatTime(timeRemaining));
-                if (timeRemaining <= 0) {
-                    countdownTimer.stop();
-                    lives = 0;
-                    updateInfoLabels();
-                    onGameEndLose();
-                }
-            });
-            countdownTimer.start();
-        } else {
-            timerLabel.setText("Time: --");
-        }
+            if (timeRemaining <= 0) {
+                countdownTimer.stop();
+                lives = 0;
+                updateInfoLabels();
+                onGameEndLose();
+            }
+        });
+        countdownTimer.start();
+    } else {
+        timerLabel.setText(memoryTrainingMode ? "Training Mode" : "Time: --");
     }
+}
+
 
     private String formatTime(int secs) {
         int mm = secs / 60;
@@ -1145,46 +1156,67 @@ private void createCardImages() {
     }
 
     private void loadSettings() {
-        Properties p = new Properties();
-        try {
-            File f = new File(SETTINGS_FILE);
-            if (f.exists()) {
-                try (FileReader fr = new FileReader(f)) {
-                    p.load(fr);
-                }
+    Properties p = new Properties();
+    try {
+        File f = new File(SETTINGS_FILE);
+        if (f.exists()) {
+            try (FileReader fr = new FileReader(f)) {
+                p.load(fr);
             }
-            String val = p.getProperty("showLeaderboardAfterGame", "false");
-            showLeaderboardAfterGame = Boolean.parseBoolean(val);
-        } catch (Exception ex) {
-            System.out.println("Failed to load settings: " + ex.getMessage());
-            showLeaderboardAfterGame = false;
         }
+        String val = p.getProperty("showLeaderboardAfterGame", "false");
+        showLeaderboardAfterGame = Boolean.parseBoolean(val);
+
+        String training = p.getProperty("memoryTrainingMode", "false");
+        memoryTrainingMode = Boolean.parseBoolean(training); // NEW
+    } catch (Exception ex) {
+        System.out.println("Failed to load settings: " + ex.getMessage());
+        showLeaderboardAfterGame = false;
+        memoryTrainingMode = false;
     }
+}
+
 
     private void saveSettings() {
-        Properties p = new Properties();
-        p.setProperty("showLeaderboardAfterGame", Boolean.toString(showLeaderboardAfterGame));
-        try (FileWriter fw = new FileWriter(SETTINGS_FILE)) {
-            p.store(fw, "MemoryGame settings");
-        } catch (IOException ex) {
-            System.out.println("Failed to save settings: " + ex.getMessage());
-        }
+    Properties p = new Properties();
+    p.setProperty("showLeaderboardAfterGame", Boolean.toString(showLeaderboardAfterGame));
+    p.setProperty("memoryTrainingMode", Boolean.toString(memoryTrainingMode)); // NEW
+    try (FileWriter fw = new FileWriter(SETTINGS_FILE)) {
+        p.store(fw, "MemoryGame settings");
+    } catch (IOException ex) {
+        System.out.println("Failed to save settings: " + ex.getMessage());
     }
+}
+
 
     private void showSettingsDialog() {
-        JCheckBox autoShow = new JCheckBox("Show leaderboard automatically after each finished game", showLeaderboardAfterGame);
-        JPanel panel = new JPanel(new BorderLayout(6,6));
-        panel.setBorder(new EmptyBorder(8,8,8,8));
-        panel.add(new JLabel("<html><b>Settings</b></html>"), BorderLayout.NORTH);
-        panel.add(autoShow, BorderLayout.CENTER);
+    JCheckBox autoShow = new JCheckBox(
+        "Show leaderboard automatically after each finished game", 
+        showLeaderboardAfterGame
+    );
+    JCheckBox trainingMode = new JCheckBox(
+        "Memory Training Mode (no time limits, unlimited lives)", 
+        memoryTrainingMode
+    );
 
-        int res = JOptionPane.showConfirmDialog(this, panel, "Settings", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-        if (res == JOptionPane.OK_OPTION) {
-            showLeaderboardAfterGame = autoShow.isSelected();
-            saveSettings();
-            JOptionPane.showMessageDialog(this, "Settings saved.");
-        }
+    JPanel panel = new JPanel();
+    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+    panel.setBorder(new EmptyBorder(8,8,8,8));
+    panel.add(new JLabel("<html><b>Settings</b></html>"));
+    panel.add(Box.createVerticalStrut(8));
+    panel.add(autoShow);
+    panel.add(Box.createVerticalStrut(6));
+    panel.add(trainingMode);
+
+    int res = JOptionPane.showConfirmDialog(this, panel, "Settings", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+    if (res == JOptionPane.OK_OPTION) {
+        showLeaderboardAfterGame = autoShow.isSelected();
+        memoryTrainingMode = trainingMode.isSelected(); // NEW
+        saveSettings();
+        JOptionPane.showMessageDialog(this, "Settings saved.");
     }
+}
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new MemoryGame());
