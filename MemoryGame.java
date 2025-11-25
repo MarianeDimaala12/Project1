@@ -43,11 +43,11 @@ public class MemoryGame extends JFrame {
     private static final int[] TIME_LIMIT_BY_LEVEL_SECONDS = {0, 0, 60, 90, 120};
 
     private static final Color WINDOW_BG = Color.WHITE;
-    private static final Color HEADER_FOOTER = new Color(0x1F5C34);
+    private static  Color HEADER_FOOTER = new Color(0x1F5C34);
     private static final Color BOARD_BG = new Color(0xE8F3EC);
     private static final Color MATCHED_COLOR = new Color(0xC9F2D0);
-    private static final Color HEADER_TEXT = Color.WHITE;
-    private static final Color PRIMARY_TEXT = Color.BLACK;
+    private static  Color HEADER_TEXT = Color.WHITE;
+    private static  Color PRIMARY_TEXT = Color.BLACK;
 
     private String playerName = null;
     private int level = 1;
@@ -86,6 +86,9 @@ public class MemoryGame extends JFrame {
     private static final String SETTINGS_FILE = "settings.properties";
     private boolean showLeaderboardAfterGame = false;
     private boolean memoryTrainingMode = false; // NEW
+    private enum Theme { LIGHT, DARK }
+    private Theme currentTheme = Theme.LIGHT; // default
+
 
 
     public MemoryGame() {
@@ -1164,29 +1167,29 @@ private void createCardImages() {
                 p.load(fr);
             }
         }
-        String val = p.getProperty("showLeaderboardAfterGame", "false");
-        showLeaderboardAfterGame = Boolean.parseBoolean(val);
+        showLeaderboardAfterGame = Boolean.parseBoolean(p.getProperty("showLeaderboardAfterGame", "false"));
+        memoryTrainingMode = Boolean.parseBoolean(p.getProperty("memoryTrainingMode", "false"));
 
-        String training = p.getProperty("memoryTrainingMode", "false");
-        memoryTrainingMode = Boolean.parseBoolean(training); // NEW
+        String themeStr = p.getProperty("theme", "LIGHT");
+        currentTheme = Theme.valueOf(themeStr.toUpperCase());
+        applyTheme(); // Apply saved theme
     } catch (Exception ex) {
         System.out.println("Failed to load settings: " + ex.getMessage());
-        showLeaderboardAfterGame = false;
-        memoryTrainingMode = false;
     }
 }
 
-
-    private void saveSettings() {
+private void saveSettings() {
     Properties p = new Properties();
     p.setProperty("showLeaderboardAfterGame", Boolean.toString(showLeaderboardAfterGame));
-    p.setProperty("memoryTrainingMode", Boolean.toString(memoryTrainingMode)); // NEW
+    p.setProperty("memoryTrainingMode", Boolean.toString(memoryTrainingMode));
+    p.setProperty("theme", currentTheme.name());
     try (FileWriter fw = new FileWriter(SETTINGS_FILE)) {
         p.store(fw, "MemoryGame settings");
     } catch (IOException ex) {
         System.out.println("Failed to save settings: " + ex.getMessage());
     }
 }
+
 
 
     private void showSettingsDialog() {
@@ -1198,6 +1201,8 @@ private void createCardImages() {
         "Memory Training Mode (no time limits, unlimited lives)", 
         memoryTrainingMode
     );
+    
+
 
     JPanel panel = new JPanel();
     panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -1207,6 +1212,12 @@ private void createCardImages() {
     panel.add(autoShow);
     panel.add(Box.createVerticalStrut(6));
     panel.add(trainingMode);
+    
+    JComboBox<String> themeSelector = new JComboBox<>(new String[] {"Light", "Dark"});
+    themeSelector.setSelectedItem(currentTheme == Theme.DARK ? "Dark" : "Light");
+    panel.add(Box.createVerticalStrut(6));
+    panel.add(new JLabel("Theme:"));
+    panel.add(themeSelector);
 
     int res = JOptionPane.showConfirmDialog(this, panel, "Settings", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
     if (res == JOptionPane.OK_OPTION) {
@@ -1215,7 +1226,41 @@ private void createCardImages() {
         saveSettings();
         JOptionPane.showMessageDialog(this, "Settings saved.");
     }
+    
+    if (res == JOptionPane.OK_OPTION) {
+    showLeaderboardAfterGame = autoShow.isSelected();
+    memoryTrainingMode = trainingMode.isSelected();
+
+    currentTheme = themeSelector.getSelectedItem().toString().equalsIgnoreCase("Dark") 
+                    ? Theme.DARK 
+                    : Theme.LIGHT;
+
+    saveSettings();
+    applyTheme();
+    JOptionPane.showMessageDialog(this, "Settings saved.");
 }
+
+}
+    
+    private void applyTheme() {
+    if (currentTheme == Theme.DARK) {
+        getContentPane().setBackground(Color.DARK_GRAY);
+        boardPanel.setBackground(new Color(0x333333));
+        HEADER_FOOTER = new Color(0x222222);
+        PRIMARY_TEXT = Color.WHITE;
+        HEADER_TEXT = Color.WHITE;
+    } else {
+        getContentPane().setBackground(Color.WHITE);
+        boardPanel.setBackground(new Color(0xE8F3EC));
+        HEADER_FOOTER = new Color(0x1F5C34);
+        PRIMARY_TEXT = Color.BLACK;
+        HEADER_TEXT = Color.WHITE;
+    }
+
+    // Update all components
+    SwingUtilities.updateComponentTreeUI(this);
+}
+
 
 
     public static void main(String[] args) {
