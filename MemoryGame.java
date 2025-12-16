@@ -1,16 +1,14 @@
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 import java.util.ArrayList;
-import javax.sound.sampled.*;    // ADDED for audio
-import java.net.URL;            // ADDED for online resources
-import java.io.IOException;     // ADDED for audio handling
+import javax.sound.sampled.*;    
+import java.net.URL;            
+import java.io.IOException;     
 import javax.swing.Timer;
 import java.io.FileWriter;
 import java.io.BufferedReader;
@@ -19,10 +17,9 @@ import java.io.File;
 import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.stream.Collectors;
 import java.util.Properties;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.SwingConstants; // optional — already covered by javax.swing.* but explicit helps clarity
+import javax.swing.SwingConstants; 
 
 
 public class MemoryGame extends JFrame {
@@ -60,7 +57,7 @@ public class MemoryGame extends JFrame {
     private int attempts = 0;
 
     private JPanel boardPanel;
-    // MAIN & PAUSE MENU PANELS
+    
     private JPanel mainMenuPanel;
     private JPanel pauseMenuPanel;
 
@@ -80,14 +77,14 @@ public class MemoryGame extends JFrame {
 
     private final Map<String, String> descriptions = new HashMap<>();
 
-    // Leaderboard storage
+    
     private static final String LEADERBOARD_FILE = "leaderboard.txt";
-    // Settings file
+    
     private static final String SETTINGS_FILE = "settings.properties";
     private boolean showLeaderboardAfterGame = false;
-    private boolean memoryTrainingMode = false; // NEW
+    private boolean memoryTrainingMode = false;
     private enum Theme { LIGHT, DARK }
-    private Theme currentTheme = Theme.LIGHT; // default
+    private Theme currentTheme = Theme.LIGHT; 
 
 
 
@@ -100,15 +97,15 @@ public class MemoryGame extends JFrame {
         getContentPane().setBackground(WINDOW_BG);
 
         createDescriptions();
-        createCardImages(); // Initialize card images map
+        createCardImages(); 
         createTopPanel();
         createBoardPanel();
         createMainMenuPanel();
         createPauseMenuPanel();
 
-        loadSettings(); // load showLeaderboardAfterGame
+        loadSettings(); 
 
-        // show new fade-in welcome screen (Option B: replaces previous popup)
+        
         SwingUtilities.invokeLater(() -> {
             boolean ok = showWelcomeScreenAndGetName();
             if (!ok) System.exit(0);
@@ -191,33 +188,29 @@ public class MemoryGame extends JFrame {
     
     private Map<String, String> cardImages = new HashMap<>();
 
-    /**
-     * Converts a Google Drive sharing link (e.g., .../view?usp=sharing)
-     * to a direct-download link (e.g., .../export?format=jpg&id=...)
-     * that can be used by ImageIcon to load the image content.
-     */
+    
     private String convertDriveLinkToDirect(String sharingUrl) {
         if (sharingUrl == null) return null;
 
-        // Check for the standard sharing ID format (d/.../view or file/d/...)
+        
         int startIndex = sharingUrl.indexOf("/d/");
         if (startIndex != -1) {
             int endIndex = sharingUrl.indexOf("/view", startIndex);
             if (endIndex != -1) {
-                // Extracts the file ID
+                
                 String fileId = sharingUrl.substring(startIndex + 3, endIndex);
-                // Return the direct export link
+                
                 return "https://drive.google.com/uc?export=download&id=" + fileId;
             }
         }
-        // Fallback in case of unexpected URL format
+        
         return sharingUrl;
     }
 
 
 private void createCardImages() {
     String basePath = "C:\\Users\\acer\\OneDrive\\Documents\\Memory Game\\images";
-  // folder where your images are stored
+  
 
     cardImages.put("SIT", basePath + "\\SIT.jpg");
     cardImages.put("JPCS", basePath + "\\JPCS.jpg");
@@ -547,7 +540,7 @@ private void createCardImages() {
         if (countdownTimer != null && timeLimitSeconds > 0) {
             countdownTimer.start();
         }
-        // safer way to restore the original content pane: we keep board panel in CENTER; just set a root content
+        
         Container content = getContentPane();
         setContentPane(new JPanel(new BorderLayout()));
         getContentPane().setBackground(WINDOW_BG);
@@ -576,10 +569,10 @@ private void createCardImages() {
     lives = LIVES_BY_LEVEL[level - 1];
     timeLimitSeconds = TIME_LIMIT_BY_LEVEL_SECONDS[level - 1];
 
-    // MEMORY TRAINING MODE OVERRIDES
+    
     if (memoryTrainingMode) {
-        lives = Integer.MAX_VALUE;      // unlimited lives
-        timeLimitSeconds = 0;           // no countdown timer
+        lives = Integer.MAX_VALUE;      
+        timeLimitSeconds = 0;           
     }
 
     matchesFound = 0;
@@ -623,7 +616,7 @@ private void createCardImages() {
         boardPanel.setLayout(new GridLayout(rows, cols, 8, 8));
 
         for (String content : pairContents) {
-        CardButton b = new CardButton(content); // will now display image if mapped
+        CardButton b = new CardButton(content); 
         b.addActionListener(e -> onCardClicked(b));
         cards.add(b);
         boardPanel.add(b);
@@ -667,13 +660,13 @@ private void createCardImages() {
                 int timeBonus = (timeLimitSeconds > 0) ? Math.max(0, timeRemaining) : 0;
                 
                 if (consecutiveMatches > 1) {
-        showTemporaryMessage("🔥 Combo! Streak x" + consecutiveMatches + "!", 2000 ); // 1.5 sec
+        showTemporaryMessage("🔥 Combo! Streak x" + consecutiveMatches + "!", 2000 ); 
     }
 
 
-                // Combo multiplier: 1x, 1.2x, 1.5x, 2x, etc.
+               
                 double comboMultiplier = 1 + (consecutiveMatches - 1) * 0.2;
-                if (comboMultiplier > 3.0) comboMultiplier = 3.0; // cap at 3x
+                if (comboMultiplier > 3.0) comboMultiplier = 3.0; 
 
                 int pointsThisMatch = (int)((basePoints + timeBonus) * comboMultiplier);
                 score += pointsThisMatch;
@@ -732,7 +725,7 @@ private void createCardImages() {
     if (countdownTimer != null) countdownTimer.stop();
 
     if (level < PAIRS_BY_LEVEL.length) {
-        // For levels 1–4, go to next level
+        
         int option = JOptionPane.showConfirmDialog(this,
                 "Level " + level + " complete!\nScore: " + score + "\nProceed to next level?",
                 "Level Complete",
@@ -754,7 +747,7 @@ private void createCardImages() {
             }
         }
     } else {
-        // Level 5 completed — final level
+       
         saveScoreToLeaderboard();
         String[] options = {"View Leaderboard", "Start New Game", "Exit"};
         int choice = JOptionPane.showOptionDialog(this,
@@ -767,7 +760,7 @@ private void createCardImages() {
                 options[0]);
 
         switch (choice) {
-            case 0 -> showLeaderboardDialog(); // View leaderboard
+            case 0 -> showLeaderboardDialog(); 
             case 1 -> {
                 playerName = null;
                 boolean ok = showWelcomeScreenAndGetName();
@@ -779,7 +772,7 @@ private void createCardImages() {
                     System.exit(0);
                 }
             }
-            default -> System.exit(0); // Exit
+            default -> System.exit(0); 
         }
     }
 }
@@ -792,7 +785,7 @@ private void createCardImages() {
         String msg = String.format("%s, you LOST at Level %d!\nFinal Score: %d", player, level, score);
         saveScoreToLeaderboard();
 
-        // show leaderboard automatically if setting enabled
+        
         if (showLeaderboardAfterGame) {
             showLeaderboardDialog();
         }
@@ -824,7 +817,7 @@ private void createCardImages() {
 
         saveScoreToLeaderboard();
 
-        // Show leaderboard automatically if option is enabled
+        
         if (showLeaderboardAfterGame) {
             showLeaderboardDialog();
         }
@@ -923,14 +916,14 @@ private void createCardImages() {
     popup.add(label);
     popup.pack();
 
-    // center over game window
+    
     Point loc = getLocationOnScreen();
     int x = loc.x + (getWidth() - popup.getWidth()) / 2;
     int y = loc.y + (getHeight() - popup.getHeight()) / 2;
     popup.setLocation(x, y);
     popup.setVisible(true);
 
-    // hide after duration
+    
     new Timer(durationMillis, e -> popup.dispose()).start();
 }
 
@@ -950,7 +943,7 @@ private void createCardImages() {
         setBorder(new LineBorder(new Color(0xBDBDBD)));
         setBackground(BOARD_BG);
 
-        // Load image from Google Drive
+        
         String path = cardImages.get(content);
         if (path != null) {
             File file = new File(path);
@@ -976,10 +969,10 @@ private void createCardImages() {
 
     public void showFace() {
         faceUp = true;
-        // Use icon if available, otherwise fallback to text
+        
         if (faceIcon != null) {
             setIcon(faceIcon);
-            setText(null); // Clear text when icon is set
+            setText(null); 
         }
         else {
              setIcon(null);
@@ -1053,9 +1046,7 @@ private void createCardImages() {
     }
     
 
-    /**
-     * New, improved leaderboard dialog with JTable, sortable columns, and automatic ranking.
-     */
+    
     private void showLeaderboardDialog() {
     java.util.List<String[]> rows = new ArrayList<>();
 
@@ -1098,9 +1089,9 @@ private void createCardImages() {
             Component c = super.prepareRenderer(renderer, row, column);
             if (!isRowSelected(row)) {
                 switch (row) {
-                    case 0: c.setBackground(new Color(255, 215, 0)); break; // Gold
-                    case 1: c.setBackground(new Color(192, 192, 192)); break; // Silver
-                    case 2: c.setBackground(new Color(205, 127, 50)); break; // Bronze
+                    case 0: c.setBackground(new Color(255, 215, 0)); break; 
+                    case 1: c.setBackground(new Color(192, 192, 192)); break; 
+                    case 2: c.setBackground(new Color(205, 127, 50)); break; 
                     default: c.setBackground(Color.WHITE); break;
                 }
             }
@@ -1132,7 +1123,7 @@ private void createCardImages() {
     );
 
     switch (choice) {
-        case 0 -> resetLeaderboard(); // Reset leaderboard
+        case 0 -> resetLeaderboard(); 
         case 1 -> {
             playerName = null;
             boolean ok = showWelcomeScreenAndGetName();
@@ -1144,7 +1135,7 @@ private void createCardImages() {
                 System.exit(0);
             }
         }
-        default -> System.exit(0); // Exit
+        default -> System.exit(0); 
     }
 }
 
@@ -1172,7 +1163,7 @@ private void createCardImages() {
 
         String themeStr = p.getProperty("theme", "LIGHT");
         currentTheme = Theme.valueOf(themeStr.toUpperCase());
-        applyTheme(); // Apply saved theme
+        applyTheme(); 
     } catch (Exception ex) {
         System.out.println("Failed to load settings: " + ex.getMessage());
     }
@@ -1222,7 +1213,7 @@ private void saveSettings() {
     int res = JOptionPane.showConfirmDialog(this, panel, "Settings", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
     if (res == JOptionPane.OK_OPTION) {
         showLeaderboardAfterGame = autoShow.isSelected();
-        memoryTrainingMode = trainingMode.isSelected(); // NEW
+        memoryTrainingMode = trainingMode.isSelected(); 
         saveSettings();
         JOptionPane.showMessageDialog(this, "Settings saved.");
     }
@@ -1257,7 +1248,7 @@ private void saveSettings() {
         HEADER_TEXT = Color.WHITE;
     }
 
-    // Update all components
+    
     SwingUtilities.updateComponentTreeUI(this);
 }
 
